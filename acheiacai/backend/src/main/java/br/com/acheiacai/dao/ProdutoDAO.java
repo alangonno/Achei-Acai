@@ -1,13 +1,18 @@
 package br.com.acheiacai.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import br.com.acheiacai.uteis.FabricaConexao;
 
 public class ProdutoDAO{
 
     private Connection conexao;
-
 
     private Connection getConexao() {
         try { 
@@ -18,14 +23,38 @@ public class ProdutoDAO{
 
         }
 
-        conexao = FabricaConexao.getConexao();
+        this.conexao = FabricaConexao.getConexao();
         return conexao;
     }
 
     
 
-    public void listarProdutos() {
-        String sql = "SELECT * FROM produtos";
-        
+public ArrayList listarTodos() {
+
+    String sql = "SELECT * FROM produtos";
+    List<Produto> produtos = new ArrayList<>();
+
+    try (Connection conexao = getConexao();
+        PreparedStatement stmt = conexao.prepareStatement(sql);
+        ResultSet resultado = stmt.executeQuery()) {
+
+            while(resultado.next()) {
+                Long id = resultado.getLong("id");
+                String nome = resultado.getString("nome");
+                String tipo = resultado.getString("tipo");
+                String variacao = resultado.getString("variacao");
+                String tamanho = resultado.getString("tamanho");
+                BigDecimal preco = resultado.getBigDecimal("preco");
+                
+                Produto produto = new Produto(id, nome, tipo, variacao, tamanho, preco);
+                produtos.add(produto);
+                }
+
+            } catch (SQLException e) {
+                    System.out.println(e);
+                }
+
+        return produtos;
+    
     }
 }

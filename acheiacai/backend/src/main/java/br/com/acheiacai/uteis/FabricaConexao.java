@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public class FabricaConexao {
 
-    public Connection getConexao() {
+    public static Connection getConexao() {
 
         try {
         Properties prop = getProperties();
@@ -24,7 +24,7 @@ public class FabricaConexao {
         }
     }
 
-    private Properties getProperties() throws IOException {
+    private static Properties getProperties() throws IOException {
         Properties prop = new Properties();
         String path="/home/alan/conexao.properties";
         prop.load(FabricaConexao.class.getResourceAsStream(path));
