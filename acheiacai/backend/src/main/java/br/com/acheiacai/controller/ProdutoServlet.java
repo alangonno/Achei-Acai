@@ -25,24 +25,20 @@ public class ProdutoServlet extends HttpServlet{
                 ObjectMapper conversor = new ObjectMapper();
                 String jsonProdutos = conversor.writeValueAsString(produtos);
                 response.setContentType("application/json");
-                response.setCharacterEnconding("UTF-8");
-                response.getWrite().print(jsonProdutos);
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().print(jsonProdutos);
                 
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.setContentType("application/json");
-                response.setCharacterEnconding("UTF-8");
+                response.setCharacterEncoding("UTF-8");
 
                 String erroJson = "Falha ao processar a requisição de produtos. detalhe: " + e.getMessage();
-                response.getWrite.print(erroJson);
+                response.getWriter().print(erroJson);
 
                 e.printStackTrace();
                 
             }
-
-
-
-
 
         }
 }

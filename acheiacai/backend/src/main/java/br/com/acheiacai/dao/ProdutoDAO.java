@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.List;
 
+import br.com.acheiacai.model.Produto;
 import br.com.acheiacai.uteis.FabricaConexao;
 
 public class ProdutoDAO{
@@ -32,7 +32,7 @@ public class ProdutoDAO{
 public ArrayList listarTodos() {
 
     String sql = "SELECT * FROM produtos";
-    List<Produto> produtos = new ArrayList<>();
+    ArrayList<Produto> produtos = new ArrayList<>();
 
     try (Connection conexao = getConexao();
         PreparedStatement stmt = conexao.prepareStatement(sql);
@@ -49,6 +49,9 @@ public ArrayList listarTodos() {
                 Produto produto = new Produto(id, nome, tipo, variacao, tamanho, preco);
                 produtos.add(produto);
                 }
+
+                
+
 
             } catch (SQLException e) {
                     System.out.println(e);
