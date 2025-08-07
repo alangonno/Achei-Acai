@@ -20,7 +20,7 @@ public class ProdutoDAO{
                 return conexao;
             }
         } catch (SQLException e) {
-
+            
         }
 
         this.conexao = FabricaConexao.getConexao();
@@ -50,11 +50,9 @@ public ArrayList listarTodos() {
                 produtos.add(produto);
                 }
 
-                
-
-
             } catch (SQLException e) {
-                    System.out.println(e);
+                    System.err.println("Erro ao listar produtos!");
+                    e.printStackTrace();
                 }
 
         return produtos;
