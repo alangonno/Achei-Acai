@@ -3,13 +3,15 @@
 *.log
 logs/
 
+/backend/src/main/resources
+
 
 #pasta build do maven
 /target/
 /backend/target/
 
 # IntelliJ IDEA
-.idea/
+../.idea/
 *.iml
 *.iws
 
