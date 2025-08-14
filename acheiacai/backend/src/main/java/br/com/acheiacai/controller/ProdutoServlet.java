@@ -20,13 +20,14 @@ public class ProdutoServlet extends HttpServlet{
 
             try {
                 ProdutoDAO prodDAO = new ProdutoDAO();
-
                 List<Produto> produtos = prodDAO.listarTodos();
                 ObjectMapper conversor = new ObjectMapper();
+
                 String jsonProdutos = conversor.writeValueAsString(produtos);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().print(jsonProdutos);
+                response.getWriter().flush();
                 
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -37,7 +38,6 @@ public class ProdutoServlet extends HttpServlet{
                 response.getWriter().print(erroJson);
 
                 e.printStackTrace();
-                
             }
 
         }

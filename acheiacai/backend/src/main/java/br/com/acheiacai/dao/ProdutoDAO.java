@@ -14,13 +14,13 @@ public class ProdutoDAO{
 
     private Connection conexao;
 
-    private Connection getConexao() {
+    public Connection getConexao() {
         try { 
             if (conexao != null && !conexao.isClosed()) {
                 return conexao;
             }
         } catch (SQLException e) {
-            
+
         }
 
         this.conexao = FabricaConexao.getConexao();
