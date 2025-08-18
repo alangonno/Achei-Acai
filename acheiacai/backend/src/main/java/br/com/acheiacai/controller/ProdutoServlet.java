@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -30,7 +31,6 @@ public class ProdutoServlet extends HttpServlet{
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().print(jsonProdutos);
-                response.getWriter().flush();
                 
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -49,6 +49,7 @@ public class ProdutoServlet extends HttpServlet{
             throws ServletException, IOException {
 
         try {
+
             String jsonString = request.
                     getReader().
                     lines().
@@ -60,6 +61,38 @@ public class ProdutoServlet extends HttpServlet{
             }
 
             Produto novoProduto = conversor.readValue(jsonString, Produto.class);
+
+            ArrayList<String> erros = new ArrayList<>();
+
+            if (novoProduto.nome() == null || novoProduto.nome().isBlank()) {
+                erros.add("nome esta vazio");
+            }
+
+            if (novoProduto.tipo() == null || novoProduto.tipo().isBlank()) {
+                erros.add("tipo esta vazio");
+            }
+
+            if (novoProduto.variacao() == null || novoProduto.variacao().isBlank()) {
+                erros.add("variacao esta vazio");
+            }
+
+            if (novoProduto.tamanho() == null || novoProduto.tamanho().isBlank()) {
+                erros.add("tamanho esta vazio");
+            }
+
+            if (novoProduto.preco() == null || novoProduto.preco().compareTo(BigDecimal.ZERO) <= 0) {
+                erros.add("preço é 0 ou negativo");
+            }
+
+            if (!erros.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                String jsonErros = conversor.writeValueAsString(erros);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().print(jsonErros);
+                return;
+            }
+
             prodDAO.criarProduto(novoProduto);
 
             response.setStatus(HttpServletResponse.SC_CREATED);
@@ -86,9 +119,8 @@ public class ProdutoServlet extends HttpServlet{
 
     }
 
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+    protected void doPatch(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
 
     }
 
