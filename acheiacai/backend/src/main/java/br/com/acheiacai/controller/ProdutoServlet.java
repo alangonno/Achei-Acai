@@ -122,6 +122,45 @@ public class ProdutoServlet extends HttpServlet{
     protected void doPatch(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String jsonString = request.
+                getReader().
+                lines().
+                collect(Collectors.joining(System.lineSeparator()));
+
+        if (jsonString == null || jsonString.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Erro: Corpo da requisição está vazio.");
+        }
+
+        Produto produtoAtualizado = conversor.readValue(jsonString, Produto.class);
+        try {
+            String alteracaoJson = conversor.writeValueAsString(prodDAO.atualizarProduto(produtoAtualizado));
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write("Produto alterado com sucesso!");
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().print(alteracaoJson);
+
+        } catch (JsonProcessingException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
+            response.getWriter().write("Erro: O JSON enviado é inválido. Detalhes: " + e.getMessage());
+            e.printStackTrace();
+
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Erro: Falha ao salvar o produto no banco de dados.");
+            e.printStackTrace();
+
+        } catch (IllegalArgumentException e){
+            response.setStatus((HttpServletResponse.SC_NO_CONTENT));
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write(e.getMessage());
+            e.printStackTrace();
+        }
+
+
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
