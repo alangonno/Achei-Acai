@@ -28,8 +28,6 @@ public class ProdutoDAO{
         return conexao;
     }
 
-    
-
     public ArrayList<Produto> listarTodos() {
 
         String sql = "SELECT * FROM produtos";
@@ -72,16 +70,20 @@ public class ProdutoDAO{
             stmt.setString(3, produto.variacao());
             stmt.setString(4, produto.tamanho());
             stmt.setBigDecimal(5, produto.preco());
-            stmt.execute();
+            stmt.executeUpdate();
 
         }
     }
 
-    public ArrayList<String> atualizarProduto(Produto produto) throws Exception, SQLException {
+    public ArrayList<String> atualizarProduto(Produto produto) throws IllegalArgumentException, SQLException, Exception {
 
         ArrayList<String> linhasAlteradas = new ArrayList<String>();
         ArrayList<Object> parametros = new ArrayList<Object>();
         StringBuilder sql = new StringBuilder("UPDATE produtos SET ");
+
+        //VERIFICAÇÃO DE CAMPOS
+
+        //salva os parametros que vão ser alterados e adicionam no sql
 
         if (produto.id() == null) {
             throw new IllegalArgumentException();
@@ -128,7 +130,9 @@ public class ProdutoDAO{
 
         try (Connection conexao = getConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql.toString())) {
-            for(int i = 0; i < parametros.size(); i++) {
+
+
+            for(int i = 0; i < parametros.size(); i++) { //Adiciona os parametros no Statement
                 stmt.setObject(i + 1, parametros.get(i));
             }
 
@@ -136,12 +140,30 @@ public class ProdutoDAO{
 
             int idExistente = stmt.executeUpdate();
 
-            if (idExistente == 0) {
+            if (idExistente == 0) { // Se 0 linhas forem afetadas não existe o ID
                 throw new IllegalArgumentException();
             }
 
             return linhasAlteradas;
 
         }
+    }
+
+    public void deletarProduto (Produto produto) throws SQLException, IllegalArgumentException {
+
+        String sql = "DELETE FROM produtos WHERE id = ?";
+
+        try (Connection conexao = getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setLong(1, produto.id());
+            int linhasalteradas = stmt.executeUpdate();
+
+            if (linhasalteradas == 0) {
+                throw new IllegalArgumentException("ID não encontrado");
+            }
+
+        }
+
     }
 }
