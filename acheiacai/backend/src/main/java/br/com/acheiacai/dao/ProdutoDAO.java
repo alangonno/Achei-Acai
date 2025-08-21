@@ -1,12 +1,8 @@
 package br.com.acheiacai.dao;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import br.com.acheiacai.model.Produto;
 import br.com.acheiacai.uteis.FabricaConexao;
@@ -28,7 +24,7 @@ public class ProdutoDAO{
         return conexao;
     }
 
-    public ArrayList<Produto> listarTodos() {
+    public ArrayList<Produto> listarTodos() throws Exception{
 
         String sql = "SELECT * FROM produtos";
         ArrayList<Produto> produtos = new ArrayList<>();
@@ -38,6 +34,7 @@ public class ProdutoDAO{
             ResultSet resultado = stmt.executeQuery()) {
 
                 while(resultado.next()) {
+
                     Long id = resultado.getLong("id");
                     String nome = resultado.getString("nome");
                     String tipo = resultado.getString("tipo");
@@ -58,12 +55,12 @@ public class ProdutoDAO{
 
         }
 
-    public void criarProduto(Produto produto) throws SQLException {
+    public Long criarProduto(Produto produto) throws SQLException {
 
         String sql = "INSERT INTO produtos (nome, tipo, variacao, tamanho, preco)  VALUES(?, ?, ?, ?, ?)";
 
         try (Connection conexao = getConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+             PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, produto.nome());
             stmt.setString(2, produto.tipo());
@@ -72,7 +69,15 @@ public class ProdutoDAO{
             stmt.setBigDecimal(5, produto.preco());
             stmt.executeUpdate();
 
+            ResultSet resultado = stmt.getGeneratedKeys();
+            if(resultado.next()) {
+                Long novoId = resultado.getLong(1);
+                return novoId;
+                }
+
         }
+
+        return -1L;
     }
 
     public ArrayList<String> atualizarProduto(Produto produto) throws IllegalArgumentException, SQLException, Exception {
@@ -85,14 +90,14 @@ public class ProdutoDAO{
 
         //salva os parametros que vão ser alterados e adicionam no sql
 
-        if (produto.id() == null) {
+        if (buscarID(produto.id()) == null) {
             throw new IllegalArgumentException();
         }
 
         if(produto.nome() != null && !produto.nome().isBlank()) {
             sql.append("nome = ?, ");
             parametros.add(produto.nome());
-            linhasAlteradas.add("nome alterado para" + produto.nome());
+            linhasAlteradas.add("nome alterado para " + produto.nome());
 
         }
 
@@ -105,19 +110,19 @@ public class ProdutoDAO{
         if(produto.tamanho() != null && !produto.tamanho().isBlank()) {
             sql.append("tamanho = ?, ");
             parametros.add(produto.tamanho());
-            linhasAlteradas.add("tamanho alterado para" + produto.tamanho());
+            linhasAlteradas.add("tamanho alterado para " + produto.tamanho());
         }
 
         if(produto.variacao() != null && !produto.variacao().isBlank()) {
             sql.append("variacao = ?, ");
             parametros.add(produto.variacao());
-            linhasAlteradas.add("variacao alterada para" + produto.variacao());
+            linhasAlteradas.add("variacao alterada para " + produto.variacao());
         }
 
         if(produto.preco() != null && !(produto.preco().compareTo(BigDecimal.ZERO) <= 0)) {
             sql.append("preco = ?, ");
             parametros.add(produto.preco());
-            linhasAlteradas.add("preco alterado para" + produto.preco());
+            linhasAlteradas.add("preco alterado para " + produto.preco());
         }
 
         if (parametros.isEmpty()) {
@@ -138,20 +143,20 @@ public class ProdutoDAO{
 
             stmt.setLong(parametros.size() + 1, produto.id());
 
-            int idExistente = stmt.executeUpdate();
-
-            if (idExistente == 0) { // Se 0 linhas forem afetadas não existe o ID
-                throw new IllegalArgumentException();
-            }
+            stmt.executeUpdate();
 
             return linhasAlteradas;
 
         }
     }
 
-    public void deletarProduto (Produto produto) throws SQLException, IllegalArgumentException {
+    public void deletarProduto (Produto produto) throws SQLException, IllegalArgumentException, Exception {
 
         String sql = "DELETE FROM produtos WHERE id = ?";
+
+        if (buscarID(produto.id()) == null ) {
+            throw new IllegalArgumentException();
+        }
 
         try (Connection conexao = getConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
@@ -160,10 +165,64 @@ public class ProdutoDAO{
             int linhasalteradas = stmt.executeUpdate();
 
             if (linhasalteradas == 0) {
-                throw new IllegalArgumentException("ID não encontrado");
+
             }
 
         }
+
+    }
+
+    public Produto buscarID(Long id) throws SQLException, Exception{ //Traz o produto
+        String sql = "SELECT * FROM produtos WHERE id = ?";
+
+        try (Connection conexao = getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            ResultSet resultado = stmt.executeQuery();
+            if(resultado.next()) {
+
+                String nome = resultado.getString("nome");
+                String tipo = resultado.getString("tipo");
+                String variacao = resultado.getString("variacao");
+                String tamanho = resultado.getString("tamanho");
+                BigDecimal preco = resultado.getBigDecimal("preco");
+
+                Produto produto = new Produto(id, nome, tipo, variacao, tamanho, preco);
+                return produto;
+            }
+            return null;
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
+    }
+
+    public ArrayList<String> verificarAtributosVazios(Produto produto) {
+
+        ArrayList<String> erros = new ArrayList<>();
+
+        if (produto.nome() == null || produto.nome().isBlank()) {
+            erros.add("nome esta vazio");
+        }
+
+        if (produto.tipo() == null || produto.tipo().isBlank()) {
+            erros.add("tipo esta vazio");
+        }
+
+        if (produto.variacao() == null || produto.variacao().isBlank()) {
+            erros.add("variacao esta vazio");
+        }
+
+        if (produto.tamanho() == null || produto.tamanho().isBlank()) {
+            erros.add("tamanho esta vazio");
+        }
+
+        if (produto.preco() == null || produto.preco().compareTo(BigDecimal.ZERO) <= 0) {
+            erros.add("preço é 0 ou negativo");
+        }
+        return erros;
 
     }
 }

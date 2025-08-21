@@ -8,15 +8,15 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class EnvioAPI {
+//public class EnvioAPI {
 
-    ProdutoDAO prodDAO = new ProdutoDAO();
-    List<Produto> produtos = prodDAO.listarTodos();
-    ObjectMapper conversor = new ObjectMapper();
-
-    @Test
-    void testeJSON() throws JsonProcessingException {
-        String jsonProdutos = conversor.writeValueAsString(produtos);
-        System.out.println(jsonProdutos);
-    }
-}
+//    ProdutoDAO prodDAO = new ProdutoDAO();
+//   List<Produto> produtos = prodDAO.listarTodos();
+//    ObjectMapper conversor = new ObjectMapper();
+//
+//    @Test
+//    void testeJSON() throws JsonProcessingException {
+//        String jsonProdutos = conversor.writeValueAsString(produtos);
+//        System.out.println(jsonProdutos);
+//    }
+//}

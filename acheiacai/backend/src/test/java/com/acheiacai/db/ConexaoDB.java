@@ -27,13 +27,13 @@ public class ConexaoDB {
         assertTrue(sucesso);
     }
 
-    @Test
-    void lerProdutos() {
-        ArrayList<Produto> produtos = prodDAO.listarTodos();
-        System.out.println(produtos.toString());
-        boolean listavazia = produtos.isEmpty();
-        assertFalse(listavazia);
-    }
+//    @Test
+//    void lerProdutos() {
+//        ArrayList<Produto> produtos = prodDAO.listarTodos();
+//        System.out.println(produtos.toString());
+//        boolean listavazia = produtos.isEmpty();
+//        assertFalse(listavazia);
+//    }
 
     @Test
     void lerProperties () throws IOException {

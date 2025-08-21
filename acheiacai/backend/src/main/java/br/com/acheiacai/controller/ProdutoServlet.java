@@ -61,28 +61,7 @@ public class ProdutoServlet extends HttpServlet{
             }
 
             Produto novoProduto = conversor.readValue(jsonString, Produto.class); // passa Json para o Model
-
-            ArrayList<String> erros = new ArrayList<>();
-
-            if (novoProduto.nome() == null || novoProduto.nome().isBlank()) {
-                erros.add("nome esta vazio");
-            }
-
-            if (novoProduto.tipo() == null || novoProduto.tipo().isBlank()) {
-                erros.add("tipo esta vazio");
-            }
-
-            if (novoProduto.variacao() == null || novoProduto.variacao().isBlank()) {
-                erros.add("variacao esta vazio");
-            }
-
-            if (novoProduto.tamanho() == null || novoProduto.tamanho().isBlank()) {
-                erros.add("tamanho esta vazio");
-            }
-
-            if (novoProduto.preco() == null || novoProduto.preco().compareTo(BigDecimal.ZERO) <= 0) {
-                erros.add("preço é 0 ou negativo");
-            }
+            ArrayList<String> erros = prodDAO.verificarAtributosVazios(novoProduto);
 
             if (!erros.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -93,10 +72,9 @@ public class ProdutoServlet extends HttpServlet{
                 return;
             }
 
-            prodDAO.criarProduto(novoProduto);
-
+            Long idNovoProd = prodDAO.criarProduto(novoProduto);
             response.setStatus(HttpServletResponse.SC_CREATED);
-            response.getWriter().write("Produto criado com sucesso!");
+            response.getWriter().write("Produto criado com sucesso! \n ID: " + idNovoProd);
 
 
         } catch (JsonProcessingException e) {
@@ -179,7 +157,7 @@ public class ProdutoServlet extends HttpServlet{
 
         try {
             prodDAO.deletarProduto(produto);
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("Produto de id " + produto.id() + " excluido com Sucesso");
 
 
