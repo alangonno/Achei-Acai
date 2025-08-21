@@ -9,4 +9,15 @@ public record Produto  (
     String variacao, 
     String tamanho, 
     BigDecimal preco
-) {}
+) {
+
+    public Produto(Long id, Produto produto) {
+        this(id,
+        produto.nome,
+        produto.tipo,
+        produto.variacao,
+        produto.tamanho,
+        produto.preco);
+
+    }
+}

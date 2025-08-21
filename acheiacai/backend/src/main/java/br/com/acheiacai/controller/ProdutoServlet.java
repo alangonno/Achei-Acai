@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-@WebServlet("/produtos")
+@WebServlet("/produtos/*")
 public class ProdutoServlet extends HttpServlet{
 
     ProdutoDAO prodDAO = new ProdutoDAO();
@@ -26,11 +26,22 @@ public class ProdutoServlet extends HttpServlet{
         throws ServletException, IOException {
 
             try {
-                ArrayList<Produto> produtos = prodDAO.listarTodos();
-                String jsonProdutos = conversor.writeValueAsString(produtos);
+                Long id = extrairIdUrl(request);
+
+                if (id == null) {
+                    ArrayList<Produto> produtos = prodDAO.listarTodos();
+                    String jsonProdutos = conversor.writeValueAsString(produtos);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().print(jsonProdutos);
+                    return ;
+                }
+
+                Produto produto = prodDAO.buscarID(id);
+                String jsonProduto= conversor.writeValueAsString(produto);
                 response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().print(jsonProdutos);
+                response.getWriter().print(jsonProduto);
+
                 
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -61,7 +72,27 @@ public class ProdutoServlet extends HttpServlet{
             }
 
             Produto novoProduto = conversor.readValue(jsonString, Produto.class); // passa Json para o Model
-            ArrayList<String> erros = prodDAO.verificarAtributosVazios(novoProduto);
+            ArrayList<String> erros = new ArrayList<>();
+
+            if (novoProduto.nome() == null || novoProduto.nome().isBlank()) {
+                erros.add("nome esta vazio");
+            }
+
+            if (novoProduto.tipo() == null || novoProduto.tipo().isBlank()) {
+                erros.add("tipo esta vazio");
+            }
+
+            if (novoProduto.variacao() == null || novoProduto.variacao().isBlank()) {
+                erros.add("variacao esta vazio");
+            }
+
+            if (novoProduto.tamanho() == null || novoProduto.tamanho().isBlank()) {
+                erros.add("tamanho esta vazio");
+            }
+
+            if (novoProduto.preco() == null ||novoProduto.preco().compareTo(BigDecimal.ZERO) <= 0) {
+                erros.add("preço é 0 ou negativo");
+            }
 
             if (!erros.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -72,10 +103,10 @@ public class ProdutoServlet extends HttpServlet{
                 return;
             }
 
-            Long idNovoProd = prodDAO.criarProduto(novoProduto);
+            prodDAO.criarProduto(novoProduto);
             response.setStatus(HttpServletResponse.SC_CREATED);
-            response.getWriter().write("Produto criado com sucesso! \n ID: " + idNovoProd);
-
+            response.setContentType("application/json"); // Definir o content type
+            response.getWriter().print(conversor.writeValueAsString(novoProduto));
 
         } catch (JsonProcessingException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
@@ -97,27 +128,42 @@ public class ProdutoServlet extends HttpServlet{
 
     }
 
-    protected void doPatch(HttpServletRequest request, HttpServletResponse response)
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String jsonString = request.
-                getReader().
-                lines().
-                collect(Collectors.joining(System.lineSeparator()));
-
-        if (jsonString == null || jsonString.trim().isEmpty()) {
+        Long id = extrairIdUrl(request);
+        if (id == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Erro: Corpo da requisição está vazio.");
+            response.getWriter().print("{\"erro\":\"ID de produto inválido ou não fornecido na URL.\"}");
+            return;
         }
 
-        Produto produtoAtualizado = conversor.readValue(jsonString, Produto.class);
-        try { // DAO retorna a lista de quais produtos foram alterados depois de altera-los
-            String alteracaoJson = conversor.writeValueAsString(prodDAO.atualizarProduto(produtoAtualizado));
+        try { // DAO retorna o produto que foi alterado
+
+            Produto produtoExistente = prodDAO.buscarID(id);
+            if (produtoExistente == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().print("{\"erro\":\" ID inexistente.\"}");
+                return;
+            }
+
+            String jsonString = request.
+                    getReader().
+                    lines().
+                    collect(Collectors.joining(System.lineSeparator()));
+
+            Produto dadosProduto = conversor.readValue(jsonString, Produto.class);
+
+            Produto produtoAtualizado = new Produto( id, dadosProduto); //Passa o id da URL para saber qual produto
+
+            prodDAO.atualizarProduto(produtoAtualizado);
+
+            Produto produtoFinal = prodDAO.buscarID(id);
+
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("Produto de id "+ produtoAtualizado.id() +" alterado com sucesso!");
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().print(alteracaoJson);
+            response.getWriter().print(conversor.writeValueAsString(produtoFinal));
 
         } catch (JsonProcessingException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
@@ -143,22 +189,24 @@ public class ProdutoServlet extends HttpServlet{
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String jsonString = request.
-                getReader().
-                lines().
-                collect(Collectors.joining(System.lineSeparator()));
-
-        if (jsonString == null || jsonString.trim().isEmpty()) {
+        Long id = extrairIdUrl(request);
+        if (id == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Erro: Corpo da requisição está vazio.");
+            response.getWriter().print("{\"erro\":\"ID de produto inválido ou não fornecido na URL.\"}");
+            return;
         }
 
-        Produto produto = conversor.readValue(jsonString, Produto.class);
+        try { // DAO retorna o produto que foi alterado
 
-        try {
-            prodDAO.deletarProduto(produto);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().write("Produto de id " + produto.id() + " excluido com Sucesso");
+            Produto produtoExistente = prodDAO.buscarID(id);
+            if (produtoExistente == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().print("{\"erro\":\" ID inexistente.\"}");
+                return;
+            }
+
+            prodDAO.deletarProduto(produtoExistente);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
 
         } catch (SQLException e) {
@@ -167,12 +215,30 @@ public class ProdutoServlet extends HttpServlet{
             e.printStackTrace();
 
         } catch (IllegalArgumentException e) {
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private Long extrairIdUrl(HttpServletRequest request) throws NumberFormatException {
+
+        String id_url = request.getPathInfo();
+
+        if (id_url == null || id_url.equals("/")) {
+            return null;
+        }
+
+        try {
+            id_url = id_url.substring(1);
+            return Long.parseLong(id_url);
+
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
     }
 }

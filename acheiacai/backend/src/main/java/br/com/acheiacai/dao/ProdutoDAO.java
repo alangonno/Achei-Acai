@@ -5,24 +5,9 @@ import java.sql.*;
 import java.util.ArrayList;
 
 import br.com.acheiacai.model.Produto;
-import br.com.acheiacai.uteis.FabricaConexao;
+import static br.com.acheiacai.uteis.FabricaConexao.getConexao;
 
 public class ProdutoDAO{
-
-    private Connection conexao;
-
-    public Connection getConexao() {
-        try { 
-            if (conexao != null && !conexao.isClosed()) {
-                return conexao;
-            }
-        } catch (SQLException e) {
-
-        }
-
-        this.conexao = FabricaConexao.getConexao();
-        return conexao;
-    }
 
     public ArrayList<Produto> listarTodos() throws Exception{
 
@@ -74,15 +59,13 @@ public class ProdutoDAO{
                 Long novoId = resultado.getLong(1);
                 return novoId;
                 }
-
         }
 
         return -1L;
     }
 
-    public ArrayList<String> atualizarProduto(Produto produto) throws IllegalArgumentException, SQLException, Exception {
+    public Produto atualizarProduto(Produto produto) throws IllegalArgumentException, SQLException, Exception {
 
-        ArrayList<String> linhasAlteradas = new ArrayList<String>();
         ArrayList<Object> parametros = new ArrayList<Object>();
         StringBuilder sql = new StringBuilder("UPDATE produtos SET ");
 
@@ -97,32 +80,27 @@ public class ProdutoDAO{
         if(produto.nome() != null && !produto.nome().isBlank()) {
             sql.append("nome = ?, ");
             parametros.add(produto.nome());
-            linhasAlteradas.add("nome alterado para " + produto.nome());
 
         }
 
         if(produto.tipo() != null && !produto.tipo().isBlank()) {
             sql.append("tipo = ?, ");
             parametros.add(produto.tipo());
-            linhasAlteradas.add("tipo alterado para " + produto.tipo());
         }
 
         if(produto.tamanho() != null && !produto.tamanho().isBlank()) {
             sql.append("tamanho = ?, ");
             parametros.add(produto.tamanho());
-            linhasAlteradas.add("tamanho alterado para " + produto.tamanho());
         }
 
         if(produto.variacao() != null && !produto.variacao().isBlank()) {
             sql.append("variacao = ?, ");
             parametros.add(produto.variacao());
-            linhasAlteradas.add("variacao alterada para " + produto.variacao());
         }
 
         if(produto.preco() != null && !(produto.preco().compareTo(BigDecimal.ZERO) <= 0)) {
             sql.append("preco = ?, ");
             parametros.add(produto.preco());
-            linhasAlteradas.add("preco alterado para " + produto.preco());
         }
 
         if (parametros.isEmpty()) {
@@ -145,7 +123,7 @@ public class ProdutoDAO{
 
             stmt.executeUpdate();
 
-            return linhasAlteradas;
+            return buscarID(produto.id());
 
         }
     }
@@ -199,30 +177,4 @@ public class ProdutoDAO{
 
     }
 
-    public ArrayList<String> verificarAtributosVazios(Produto produto) {
-
-        ArrayList<String> erros = new ArrayList<>();
-
-        if (produto.nome() == null || produto.nome().isBlank()) {
-            erros.add("nome esta vazio");
-        }
-
-        if (produto.tipo() == null || produto.tipo().isBlank()) {
-            erros.add("tipo esta vazio");
-        }
-
-        if (produto.variacao() == null || produto.variacao().isBlank()) {
-            erros.add("variacao esta vazio");
-        }
-
-        if (produto.tamanho() == null || produto.tamanho().isBlank()) {
-            erros.add("tamanho esta vazio");
-        }
-
-        if (produto.preco() == null || produto.preco().compareTo(BigDecimal.ZERO) <= 0) {
-            erros.add("preço é 0 ou negativo");
-        }
-        return erros;
-
-    }
 }
