@@ -1,5 +1,5 @@
 
-function Tabela({ columns, data, onAlterar, onExcluir  }) {
+function Tabela({ columns, data, onAlterar, onExcluir }) {
 
   // Se não houver dados
   if (!data || data.length === 0) {

@@ -1,115 +1,101 @@
-import { useEffect, useState } from "react";
+
+
+import { useEffect, useState, useCallback } from "react";
 import Tabela from "./Tabela";
-import FormularioProduto from "../components/FormularioProduto"; // 1. Importe o novo formulário
-
-// Vamos assumir que você tem um ficheiro de serviço para a API
+import FormularioGenerico from "./FormularioGenerico"; 
 
 
-function GerenciadorDeEntidade({tipo, aba}) {
-
-    const [items, setItems] = useState([]); 
+function GerenciadorDeEntidade({ servico, nomeDaEntidade, colunas }) {
+    const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); 
+    const [error, setError] = useState(null);
+    const [exibirFormulario, setExibirFormulario] = useState(false);
+    const [itemParaEditar, setItemParaEditar] = useState(null); // Estado para controlar a edição
 
-     const [exibirFormulario, setExibirFormulario] = useState(false);
-
-     const colunasProdutos = [
-        { header: 'ID', accessor: 'id' },
-        { header: 'Nome', accessor: 'nome' },
-        { header: 'Variação', accessor: 'variacao' },
-        { header: 'Tamanho', accessor: 'tamanho' },
-        {
-            header: 'Preço (R$)',
-            accessor: 'preco',
+    // useCallback memoriza a função para evitar recriações desnecessárias
+    const carregarDados = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            // Usa a função 'buscarTodos' do serviço que foi passado via props
+            const dados = await servico.buscarTodos();
+            setItems(dados);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
-    ];
-
-    const colunasComplementos = [
-        { header: 'ID', accessor: 'id' },
-        { header: 'Nome', accessor: 'nome' },
-        { header: 'Preço Adicional (R$)', accessor: 'preco_adicional' }
-    ];
-
-    const handleAlterar = (item) => {
-        alert(`A alterar o item: ${item.nome} (ID: ${item.id})`);
-        // No futuro, aqui é onde você abriria um modal ou formulário de edição
-    };
-
-    const handleSave = (item) => {
-        
-    }
-
-    const handleExcluir = (itemId) => {
-  
-        if (window.confirm(`Tem a certeza de que deseja excluir o item com ID ${itemId}?`)) {
-            console.log(`A excluir o item com ID: ${itemId}`);
-        }
-    };
-
+    }, [servico]); // A função só é recriada se o 'servico' mudar
 
     useEffect(() => {
-        const fetchData = async () => {
-           
-            if (!tipo) {
-                setLoading(false);
-                return;
-            }
+        carregarDados();
+    }, [carregarDados]); // O useEffect agora depende da função 'carregarDados'
 
+    const handleAdicionar = () => {
+        setItemParaEditar(null); // Garante que não estamos a editar
+        setExibirFormulario(true);
+    };
+
+    const handleAlterar = (item) => {
+        setItemParaEditar(item); // Guarda o item a ser editado
+        setExibirFormulario(true); // Abre o mesmo formulário, mas para edição
+    };
+
+    const handleExcluir = async (itemId) => {
+        if (window.confirm(`Tem a certeza de que deseja excluir o ${nomeDaEntidade.toLowerCase()} com ID ${itemId}?`)) {
             try {
-                
-                const apiUrl = `http://localhost:8080/achei-acai-api/${tipo}`;
-                console.log(`Buscando dados de: ${apiUrl}`);
-
-                const response = await fetch(apiUrl);
-
-                if (!response.ok) {
-                    throw new Error(`Erro Http! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                setItems(data);
-
-            } catch (error) {
-                console.error("Erro ao buscar dados", error);
-                setError(error.message); 
-            } finally {
-                setLoading(false);
+                await servico.deletar(itemId);
+                carregarDados(); 
+            } catch (err) {
+                setError(`Falha ao excluir o item: ${err.message}`);
             }
-        };
+        }
+    };
 
-        fetchData();
-    }, [tipo]); // O useEffect irá rodar novamente se a prop 'tipo' mudar
+    const handleSave = async (dadosDoFormulario) => {
+        try {
+            if (itemParaEditar) {
+                await servico.atualizar(itemParaEditar.id, dadosDoFormulario);
+            } else {
+                await servico.criar(dadosDoFormulario);
+            }
+            setExibirFormulario(false);
+            setItemParaEditar(null);
+            carregarDados(); // Recarrega os dados após salvar
+        } catch (err) {
+            setError(`Falha ao salvar o item: ${err.message}`);
+        }
+    };
 
-    if (loading) {
-        return <p>A carregar {aba}...</p>;
-    }
-
-    if (error) {
-        return <p>Ocorreu um erro: {error}</p>;
-    }
+    if (loading) return <p>A carregar {nomeDaEntidade.toLowerCase()}s...</p>;
+    if (error) return <p>Ocorreu um erro: {error}</p>;
 
     return (
         <div className="gerenciador-entidade">
-            <h1>Gestão de {aba}</h1>
+            <h1>Gestão de {nomeDaEntidade}s</h1>
             
-            {/* 2. Adicione o botão de "Adicionar Novo" aqui, acima da tabela */}
             <div className="toolbar">
-                <button onClick={() => setExibirFormulario(true)}>
-                    Adicionar Novo {aba}
-                </button>
+                {!exibirFormulario && (
+                    <button onClick={handleAdicionar}>
+                        Adicionar Novo {nomeDaEntidade}
+                    </button>
+                )}
             </div>
 
-            {/* 3. Adicione a lógica de renderização condicional */}
-            {/* Se 'exibirFormulario' for true, mostramos o formulário. Se for false, mostramos a tabela. */}
             {exibirFormulario ? (
-                <FormularioProduto 
+                <FormularioGenerico
+                    dadosIniciais={itemParaEditar}
                     onSave={handleSave}
-                    onCancel={() => setExibirFormulario(false)} 
+                    onCancel={() => {
+                        setExibirFormulario(false);
+                        setItemParaEditar(null);
+                    }}
+                    colunas={colunas} // Passa a definição das colunas para o formulário se construir
+                    nomeDaEntidade={nomeDaEntidade}
                 />
             ) : (
-                // Se o formulário não estiver a ser exibido, mostramos a tabela
-                <Tabela
-                    columns={colunasProdutos} 
+                <Tabela 
+                    columns={colunas}
                     data={items} 
                     onAlterar={handleAlterar}
                     onExcluir={handleExcluir}

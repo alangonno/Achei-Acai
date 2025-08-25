@@ -1,9 +1,41 @@
+
 import { useState } from "react";
 import GerenciadorDeEntidade from "../components/GerenciadorDeEntidade";
+import * as produtoService from '../services/produtoService';
 
 function GestaoCardapioPage() {
 
     const [abaAtiva, setAbaAtiva] = useState('produtos');
+
+    const colunasProdutos = [
+    { header: 'ID', accessor: 'id' },
+    { header: 'Nome', accessor: 'nome', type: 'text' },
+    { 
+        header: 'Tipo', 
+        accessor: 'tipo', 
+        inputType: 'select',
+        options: [         
+            { value: 'ACAI', label: 'Açaí' },
+            { value: 'SORVETE', label: 'Sorvete' },
+            { value: 'SANDUICHE', label: 'Sanduíche' },
+            { value: 'SUCO', label: 'Suco' },
+            { value: 'WHEY', label: 'Whey' },
+            { value: 'BEBIDA', label: 'Bebida' },
+        ]
+    },
+    { header: 'Variação', accessor: 'variacao', type: 'text' },
+    { header: 'Tamanho', accessor: 'tamanho', type: 'text' },
+    { header: 'Preço (R$)', accessor: 'preco', type: 'number' } ]
+
+    const colunasComplementos = [
+    { header: 'ID', accessor: 'id' },
+    { header: 'Nome', accessor: 'nome', type: 'text' },
+    { header: 'Preço Adicional (R$)', accessor: 'preco_adicional', type: 'number' }];
+
+    const colunasCoberturas = [
+    { header: 'ID', accessor: 'id' },
+    { header: 'Nome', accessor: 'nome', type: 'text' },
+    { header: 'Preço Adicional (R$)', accessor: 'preco_adicional', type: 'number' }];
 
     return (
         <div className="gestao-cardapio-container">
@@ -14,9 +46,9 @@ function GestaoCardapioPage() {
             </div>
 
             <div className="conteudo-da-aba">
-                {abaAtiva === 'produtos' && <GerenciadorDeEntidade tipo="produtos" aba={abaAtiva} />}
-                {abaAtiva === 'complementos' && <GerenciadorDeEntidade tipo="complementos" aba={abaAtiva} />}
-                {abaAtiva === 'coberturas' && <GerenciadorDeEntidade tipo="coberturas" aba={abaAtiva} />}
+                {abaAtiva === 'produtos' && <GerenciadorDeEntidade servico={produtoService} nomeDaEntidade="produtos" colunas={colunasProdutos} aba={abaAtiva} />}
+                {abaAtiva === 'complementos' && <GerenciadorDeEntidade servico={complementoService} nomeDaEntidade="complementos" colunas={colunasComplementos} aba={abaAtiva} />}
+                {abaAtiva === 'coberturas' && <GerenciadorDeEntidade servico={coberturaService} nomeDaEntidade="coberturas" colunas={colu} aba={abaAtiva} />}
             </div>
         </div>
         
