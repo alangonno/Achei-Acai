@@ -11,7 +11,8 @@ logs/
 /backend/target/
 
 # IntelliJ IDEA
-../.idea/
+/.idea/
+.idea
 *.iml
 *.iws
 
@@ -21,3 +22,68 @@ logs/
 #Arquivos do Sistema Operacional
 
 Thumbs.db 
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+
+frontend/node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+
+!.vscode/extensions.json
+.idea
+
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Diretório de dependências
+node_modules
+
+# Diretório de build
+dist
+dist-ssr
+build
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Arquivos de cache
+.vite-cache
+.npm
+.yarn-cache
+coverage
+.eslintcache
+
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Testes
+/coverage
