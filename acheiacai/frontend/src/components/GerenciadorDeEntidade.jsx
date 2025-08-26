@@ -72,12 +72,12 @@ function GerenciadorDeEntidade({ servico, nomeDaEntidade, colunas }) {
 
     return (
         <div className="gerenciador-entidade">
-            <h1>Gestão de {nomeDaEntidade}s</h1>
+            <h1>Gestão de {nomeDaEntidade}</h1>
             
             <div className="toolbar">
                 {!exibirFormulario && (
                     <button onClick={handleAdicionar}>
-                        Adicionar Novo {nomeDaEntidade}
+                        Adicionar {nomeDaEntidade}
                     </button>
                 )}
             </div>

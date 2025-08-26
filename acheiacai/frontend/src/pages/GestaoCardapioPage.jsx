@@ -32,12 +32,12 @@ function GestaoCardapioPage() {
     const colunasComplementos = [
     { header: 'ID', accessor: 'id' },
     { header: 'Nome', accessor: 'nome', type: 'text' },
-    { header: 'Preço Adicional (R$)', accessor: 'preco_adicional', type: 'number' }];
+    { header: 'Preço Adicional (R$)', accessor: 'preco', type: 'number' }];
 
     const colunasCoberturas = [
     { header: 'ID', accessor: 'id' },
     { header: 'Nome', accessor: 'nome', type: 'text' },
-    { header: 'Preço Adicional (R$)', accessor: 'preco_adicional', type: 'number' }];
+    { header: 'Preço Adicional (R$)', accessor: 'preco', type: 'number' }];
 
     return (
         <div className="gestao-cardapio-container">

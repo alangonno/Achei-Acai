@@ -22,7 +22,9 @@ function Tabela({ columns, data, onAlterar, onExcluir }) {
           <tr key={row.id}>
             {columns.map((column) => (
               <td key={column.accessor}>
-                {row[column.accessor]}
+                {column.accessor === 'preco' && !row[column.accessor]
+                  ? 0
+                  : row[column.accessor]}
               </td>
             ))}
             {(onAlterar || onExcluir) && (
