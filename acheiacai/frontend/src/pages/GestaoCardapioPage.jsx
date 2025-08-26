@@ -2,6 +2,8 @@
 import { useState } from "react";
 import GerenciadorDeEntidade from "../components/GerenciadorDeEntidade";
 import * as produtoService from '../services/produtoService';
+import * as coberturasService from '../services/coberturasService';
+import * as complementosService from '../services/complementosService';
 
 function GestaoCardapioPage() {
 
@@ -47,8 +49,10 @@ function GestaoCardapioPage() {
 
             <div className="conteudo-da-aba">
                 {abaAtiva === 'produtos' && <GerenciadorDeEntidade servico={produtoService} nomeDaEntidade="produtos" colunas={colunasProdutos} aba={abaAtiva} />}
-                {abaAtiva === 'complementos' && <GerenciadorDeEntidade servico={complementoService} nomeDaEntidade="complementos" colunas={colunasComplementos} aba={abaAtiva} />}
-                {abaAtiva === 'coberturas' && <GerenciadorDeEntidade servico={coberturaService} nomeDaEntidade="coberturas" colunas={colu} aba={abaAtiva} />}
+
+                {abaAtiva === 'complementos' && <GerenciadorDeEntidade servico={complementosService} nomeDaEntidade="complementos" colunas={colunasComplementos} aba={abaAtiva} />}
+
+                {abaAtiva === 'coberturas' && <GerenciadorDeEntidade servico={coberturasService} nomeDaEntidade="coberturas" colunas={colunasCoberturas} aba={abaAtiva} />}
             </div>
         </div>
         
