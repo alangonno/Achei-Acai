@@ -22,6 +22,7 @@ public class ComplementosServlet extends HttpServlet{
 
     ComplementosCoberturasDAO complementosDAO = new ComplementosCoberturasDAO();
     ObjectMapper conversor = new ObjectMapper();
+    String tabela = "complementos";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -31,7 +32,7 @@ public class ComplementosServlet extends HttpServlet{
             Long id = extrairIdUrl(request);
 
             if (id == null) {
-                ArrayList<ComplementoCobertura> complementos = complementosDAO.listarTodos("complementos");
+                ArrayList<ComplementoCobertura> complementos = complementosDAO.listarTodos(tabela);
                 String jsonComplementos = conversor.writeValueAsString(complementos);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -39,7 +40,7 @@ public class ComplementosServlet extends HttpServlet{
                 return ;
             }
 
-            ComplementoCobertura complemento = complementosDAO.buscarID(id, "complementos");
+            ComplementoCobertura complemento = complementosDAO.buscarID(id, tabela);
             String jsonComplemento= conversor.writeValueAsString(complemento);
             response.setContentType("application/json");
             response.getWriter().print(jsonComplemento);
@@ -93,7 +94,7 @@ public class ComplementosServlet extends HttpServlet{
                 return;
             }
 
-            Long id = complementosDAO.criar(dadosComplemento, "complementos");
+            Long id = complementosDAO.criar(dadosComplemento, tabela);
             ComplementoCobertura novoComplemento = new ComplementoCobertura(id, dadosComplemento);
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.setContentType("application/json");
@@ -118,65 +119,65 @@ public class ComplementosServlet extends HttpServlet{
         }
 
     }
-//
-//    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//
-//        Long id = extrairIdUrl(request);
-//        if (id == null) {
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            response.getWriter().print("{\"erro\":\"ID de produto inválido ou não fornecido na URL.\"}");
-//            return;
-//        }
-//
-//        try { // DAO retorna o produto que foi alterado
-//
-//            Produto produtoExistente = prodDAO.buscarID(id);
-//            if (produtoExistente == null) {
-//                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//                response.getWriter().print("{\"erro\":\" ID inexistente.\"}");
-//                return;
-//            }
-//
-//            String jsonString = request.
-//                    getReader().
-//                    lines().
-//                    collect(Collectors.joining(System.lineSeparator()));
-//
-//            Produto dadosProduto = conversor.readValue(jsonString, Produto.class);
-//
-//            Produto produtoAtualizado = new Produto( id, dadosProduto); //Passa o id da URL para saber qual produto
-//
-//            prodDAO.atualizarProduto(produtoAtualizado);
-//
-//            Produto produtoFinal = prodDAO.buscarID(id);
-//
-//            response.setStatus(HttpServletResponse.SC_OK);
-//            response.setContentType("application/json");
-//            response.setCharacterEncoding("UTF-8");
-//            response.getWriter().print(conversor.writeValueAsString(produtoFinal));
-//
-//        } catch (JsonProcessingException e) {
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-//            response.getWriter().write("Erro: O JSON enviado é inválido. Detalhes: " + e.getMessage());
-//            e.printStackTrace();
-//
-//        } catch (SQLException e) {
-//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            response.getWriter().write("Erro: Falha ao salvar o produto no banco de dados.");
-//            e.printStackTrace();
-//
-//        } catch (IllegalArgumentException e){
-//            response.setStatus((HttpServletResponse.SC_NO_CONTENT));
-//
-//        } catch (Exception e) {
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            response.getWriter().write(e.getMessage());
-//            e.printStackTrace();
-//        }
-//
-//    }
-//
+
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        Long id = extrairIdUrl(request);
+        if (id == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"erro\":\"ID de produto inválido ou não fornecido na URL.\"}");
+            return;
+        }
+
+        try { // DAO retorna o produto que foi alterado
+
+            ComplementoCobertura complementoExistente = complementosDAO.buscarID(id, tabela);
+            if (complementoExistente == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().print("{\"erro\":\" ID inexistente.\"}");
+                return;
+            }
+
+            String jsonString = request.
+                    getReader().
+                    lines().
+                    collect(Collectors.joining(System.lineSeparator()));
+
+            ComplementoCobertura dadosComplemento = conversor.readValue(jsonString, ComplementoCobertura.class);
+
+            ComplementoCobertura complementoAtualizado = new ComplementoCobertura( id, dadosComplemento); //Passa o id da URL para saber qual produto
+
+            complementosDAO.atualizar(complementoAtualizado, tabela);
+
+            ComplementoCobertura complementoFinal = complementosDAO.buscarID(id, tabela);
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().print(conversor.writeValueAsString(complementoFinal));
+
+        } catch (JsonProcessingException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
+            response.getWriter().write("Erro: O JSON enviado é inválido. Detalhes: " + e.getMessage());
+            e.printStackTrace();
+
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Erro: Falha ao salvar o produto no banco de dados.");
+            e.printStackTrace();
+
+        } catch (IllegalArgumentException e){
+            response.setStatus((HttpServletResponse.SC_NO_CONTENT));
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write(e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
+
 //    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 //            throws ServletException, IOException {
 //

@@ -61,6 +61,55 @@ public class ComplementosCoberturasDAO {
         return -1L;
     }
 
+    public ComplementoCobertura atualizar(ComplementoCobertura compCober, String tabela) throws IllegalArgumentException, SQLException, Exception {
+
+        ArrayList<Object> parametros = new ArrayList<Object>();
+        StringBuilder sql = new StringBuilder("UPDATE "+ tabela +" SET ");
+
+        //VERIFICAÇÃO DE CAMPOS
+
+        //salva os parametros que vão ser alterados e adicionam no sql
+
+        if (buscarID(compCober.id(), tabela) == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if(compCober.nome() != null && !compCober.nome().isBlank()) {
+            sql.append("nome = ?, ");
+            parametros.add(compCober.nome());
+
+        }
+
+        if(compCober.preco() != null && !(compCober.preco().compareTo(BigDecimal.ZERO) <= 0)) {
+            sql.append("preco_adicional = ?, ");
+            parametros.add(compCober.preco());
+        }
+
+        if (parametros.isEmpty()) {
+            throw new Exception("Falta dados para atualização");
+        }
+
+        sql.delete(sql.length() - 2, sql.length());
+
+        sql.append(" WHERE id = ?");
+
+        try (Connection conexao = getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql.toString())) {
+
+
+            for(int i = 0; i < parametros.size(); i++) { //Adiciona os parametros no Statement
+                stmt.setObject(i + 1, parametros.get(i));
+            }
+
+            stmt.setLong(parametros.size() + 1, compCober.id());
+
+            stmt.executeUpdate();
+
+            return buscarID(compCober.id(), tabela);
+
+        }
+    }
+
 
     public ComplementoCobertura buscarID(Long id, String tabela) throws SQLException, Exception{ //Traz o produto
         String sql = "SELECT * FROM "+ tabela +" WHERE id = ?";
