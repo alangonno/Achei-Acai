@@ -71,26 +71,26 @@ public class ProdutoServlet extends HttpServlet{
                 response.getWriter().write("Erro: Corpo da requisição está vazio.");
             }
 
-            Produto novoProduto = conversor.readValue(jsonString, Produto.class); // passa Json para o Model
+            Produto dadosProduto = conversor.readValue(jsonString, Produto.class); // passa Json para o Model
             ArrayList<String> erros = new ArrayList<>();
 
-            if (novoProduto.nome() == null || novoProduto.nome().isBlank()) {
+            if (dadosProduto.nome() == null || dadosProduto.nome().isBlank()) {
                 erros.add("nome esta vazio");
             }
 
-            if (novoProduto.tipo() == null || novoProduto.tipo().isBlank()) {
+            if (dadosProduto.tipo() == null || dadosProduto.tipo().isBlank()) {
                 erros.add("tipo esta vazio");
             }
 
-            if (novoProduto.variacao() == null || novoProduto.variacao().isBlank()) {
+            if (dadosProduto.variacao() == null || dadosProduto.variacao().isBlank()) {
                 erros.add("variacao esta vazio");
             }
 
-            if (novoProduto.tamanho() == null || novoProduto.tamanho().isBlank()) {
+            if (dadosProduto.tamanho() == null || dadosProduto.tamanho().isBlank()) {
                 erros.add("tamanho esta vazio");
             }
 
-            if (novoProduto.preco() == null ||novoProduto.preco().compareTo(BigDecimal.ZERO) <= 0) {
+            if (dadosProduto.preco() == null ||dadosProduto.preco().compareTo(BigDecimal.ZERO) <= 0) {
                 erros.add("preço é 0 ou negativo");
             }
 
@@ -103,7 +103,8 @@ public class ProdutoServlet extends HttpServlet{
                 return;
             }
 
-            prodDAO.criarProduto(novoProduto);
+            Long id = prodDAO.criarProduto(dadosProduto);
+            Produto novoProduto = new Produto(id, dadosProduto);
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.setContentType("application/json"); // Definir o content type
             response.getWriter().print(conversor.writeValueAsString(novoProduto));
