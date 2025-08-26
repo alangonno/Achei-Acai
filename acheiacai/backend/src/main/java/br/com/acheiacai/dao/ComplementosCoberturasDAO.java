@@ -110,6 +110,23 @@ public class ComplementosCoberturasDAO {
         }
     }
 
+    public void deletar(ComplementoCobertura compCober, String tabela) throws SQLException, IllegalArgumentException, Exception {
+
+        String sql = "DELETE FROM "+ tabela +" WHERE id = ?";
+
+        if (buscarID(compCober.id(), tabela) == null ) {
+            throw new IllegalArgumentException();
+        }
+
+        try (Connection conexao = getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setLong(1, compCober.id());
+            stmt.executeUpdate();
+
+        }
+
+    }
 
     public ComplementoCobertura buscarID(Long id, String tabela) throws SQLException, Exception{ //Traz o produto
         String sql = "SELECT * FROM "+ tabela +" WHERE id = ?";

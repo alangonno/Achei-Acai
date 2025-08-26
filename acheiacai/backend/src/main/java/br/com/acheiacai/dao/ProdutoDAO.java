@@ -140,11 +140,7 @@ public class ProdutoDAO{
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
             stmt.setLong(1, produto.id());
-            int linhasalteradas = stmt.executeUpdate();
-
-            if (linhasalteradas == 0) {
-
-            }
+            stmt.executeUpdate();
 
         }
 

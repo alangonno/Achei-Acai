@@ -1,9 +1,7 @@
 package br.com.acheiacai.controller;
 
 import br.com.acheiacai.dao.ComplementosCoberturasDAO;
-import br.com.acheiacai.dao.ProdutoDAO;
 import br.com.acheiacai.model.ComplementoCobertura;
-import br.com.acheiacai.model.Produto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -126,11 +124,11 @@ public class ComplementosServlet extends HttpServlet{
         Long id = extrairIdUrl(request);
         if (id == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().print("{\"erro\":\"ID de produto inválido ou não fornecido na URL.\"}");
+            response.getWriter().print("{\"erro\":\"ID de complemento inválido ou não fornecido na URL.\"}");
             return;
         }
 
-        try { // DAO retorna o produto que foi alterado
+        try { // DAO retorna o complemento que foi alterado
 
             ComplementoCobertura complementoExistente = complementosDAO.buscarID(id, tabela);
             if (complementoExistente == null) {
@@ -146,7 +144,7 @@ public class ComplementosServlet extends HttpServlet{
 
             ComplementoCobertura dadosComplemento = conversor.readValue(jsonString, ComplementoCobertura.class);
 
-            ComplementoCobertura complementoAtualizado = new ComplementoCobertura( id, dadosComplemento); //Passa o id da URL para saber qual produto
+            ComplementoCobertura complementoAtualizado = new ComplementoCobertura( id, dadosComplemento); //Passa o id da URL para saber qual complemento
 
             complementosDAO.atualizar(complementoAtualizado, tabela);
 
@@ -164,7 +162,7 @@ public class ComplementosServlet extends HttpServlet{
 
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Erro: Falha ao salvar o produto no banco de dados.");
+            response.getWriter().write("Erro: Falha ao salvar o complemento no banco de dados.");
             e.printStackTrace();
 
         } catch (IllegalArgumentException e){
@@ -178,43 +176,43 @@ public class ComplementosServlet extends HttpServlet{
 
     }
 
-//    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//
-//        Long id = extrairIdUrl(request);
-//        if (id == null) {
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            response.getWriter().print("{\"erro\":\"ID de produto inválido ou não fornecido na URL.\"}");
-//            return;
-//        }
-//
-//        try { // DAO retorna o produto que foi alterado
-//
-//            Produto produtoExistente = prodDAO.buscarID(id);
-//            if (produtoExistente == null) {
-//                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//                response.getWriter().print("{\"erro\":\" ID inexistente.\"}");
-//                return;
-//            }
-//
-//            prodDAO.deletarProduto(produtoExistente);
-//            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-//
-//
-//        } catch (SQLException e) {
-//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            response.getWriter().write("Erro: Falha ao salvar o produto no banco de dados.");
-//            e.printStackTrace();
-//
-//        } catch (IllegalArgumentException e) {
-//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//
-//        } catch (Exception e) {
-//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            response.getWriter().write(e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        Long id = extrairIdUrl(request);
+        if (id == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"erro\":\"ID de complemento inválido ou não fornecido na URL.\"}");
+            return;
+        }
+
+        try { // DAO retorna o complemento que foi alterado
+
+            ComplementoCobertura complementoExistente = complementosDAO.buscarID(id, tabela);
+            if (complementoExistente == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().print("{\"erro\":\" ID inexistente.\"}");
+                return;
+            }
+
+            complementosDAO.deletar(complementoExistente, tabela);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+
+
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Erro: Falha ao salvar o complemento no banco de dados.");
+            e.printStackTrace();
+
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write(e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     private Long extrairIdUrl(HttpServletRequest request) throws NumberFormatException {
 
