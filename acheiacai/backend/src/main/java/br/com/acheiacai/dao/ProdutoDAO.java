@@ -40,7 +40,7 @@ public class ProdutoDAO{
 
         }
 
-    public Long criarProduto(Produto produto) throws SQLException {
+    public Produto criarProduto(Produto produto) throws SQLException {
 
         String sql = "INSERT INTO produtos (nome, tipo, variacao, tamanho, preco)  VALUES(?, ?, ?, ?, ?)";
 
@@ -57,11 +57,11 @@ public class ProdutoDAO{
             ResultSet resultado = stmt.getGeneratedKeys();
             if(resultado.next()) {
                 Long novoId = resultado.getLong(1);
-                return novoId;
+                return new Produto(novoId, produto);
                 }
         }
 
-        return -1L;
+        return null;
     }
 
     public Produto atualizarProduto(Produto produto) throws IllegalArgumentException, SQLException, Exception {
@@ -123,7 +123,9 @@ public class ProdutoDAO{
 
             stmt.executeUpdate();
 
-            return buscarID(produto.id());
+            Long id = buscarID(produto.id()).id();
+
+            return new Produto(id, produto);
 
         }
     }

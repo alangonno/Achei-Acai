@@ -1,6 +1,6 @@
 package br.com.acheiacai.controller;
 
-import br.com.acheiacai.dao.ComplementosCoberturasDAO;
+import br.com.acheiacai.dao.ComplementoCoberturaDAO;
 import br.com.acheiacai.model.ComplementoCobertura;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @WebServlet("/coberturas/*")
 public class CoberturasServlet extends HttpServlet{
 
-    ComplementosCoberturasDAO coberturasDAO = new ComplementosCoberturasDAO();
+    ComplementoCoberturaDAO coberturasDAO = new ComplementoCoberturaDAO();
     ObjectMapper conversor = new ObjectMapper();
     String tabela = "coberturas";
 

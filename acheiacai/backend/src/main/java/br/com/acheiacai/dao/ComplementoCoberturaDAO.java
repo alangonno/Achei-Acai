@@ -5,12 +5,11 @@ import java.sql.*;
 import java.util.ArrayList;
 
 import br.com.acheiacai.model.ComplementoCobertura;
-import br.com.acheiacai.model.Produto;
 
 import static br.com.acheiacai.uteis.FabricaConexao.getConexao;
 
 
-public class ComplementosCoberturasDAO {
+public class ComplementoCoberturaDAO {
 
     public ArrayList<ComplementoCobertura> listarTodos(String tabela) throws Exception{
 

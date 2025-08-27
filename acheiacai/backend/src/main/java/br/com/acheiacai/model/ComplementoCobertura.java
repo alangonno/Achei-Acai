@@ -1,7 +1,5 @@
 package br.com.acheiacai.model;
 
-import br.com.acheiacai.dao.ComplementosCoberturasDAO;
-
 import java.math.BigDecimal;
 
 public record ComplementoCobertura(

@@ -103,8 +103,7 @@ public class ProdutoServlet extends HttpServlet{
                 return;
             }
 
-            Long id = prodDAO.criarProduto(dadosProduto);
-            Produto novoProduto = new Produto(id, dadosProduto);
+            Produto novoProduto = prodDAO.criarProduto(dadosProduto);
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.setContentType("application/json"); // Definir o content type
             response.getWriter().print(conversor.writeValueAsString(novoProduto));
