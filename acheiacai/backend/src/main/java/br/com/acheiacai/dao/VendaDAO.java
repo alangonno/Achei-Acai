@@ -1,12 +1,15 @@
 package br.com.acheiacai.dao;
 
-import br.com.acheiacai.model.Venda;
-import br.com.acheiacai.model.VendaItem;
+import br.com.acheiacai.model.*;
 import br.com.acheiacai.uteis.FabricaConexao;
 
+import java.math.BigDecimal;
 import java.sql.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 
 public class VendaDAO {
 
@@ -25,6 +28,7 @@ public class VendaDAO {
         Long idVenda = null;
         Connection conexao = null;
         Date dataDaTransacao = null;
+
         try {
 
             conexao = FabricaConexao.getConexao();
@@ -100,4 +104,165 @@ public class VendaDAO {
 
             return new Venda(idVenda, dataDaTransacao, venda);
         }
+
+    public VendaDetalhada buscarPorIdVendaDetalhado(Long vendaId) throws Exception {
+        ProdutoDAO produtoDAO = new ProdutoDAO();
+        ComplementoCoberturaDAO compCobDAO = new ComplementoCoberturaDAO();
+
+        // 1. Buscar a Venda base
+        Venda vendaBase = buscarVendaBasePorId(vendaId);
+        if (vendaBase == null) {
+            return null; // Venda não encontrada
+        }
+
+        List<VendaItemDetalhado> itensDetalhados = new ArrayList<>();
+        List<VendaItem> itensBase = buscarItensBasePorVendaId(vendaId);
+
+        // 2. Para cada item, buscar os detalhes completos
+        for (VendaItem itemBase : itensBase) {
+            Produto produto = produtoDAO.buscarID(itemBase.produtoId());
+            List<ComplementoCobertura> complementos = buscarAdicionaisPorItemId(itemBase.id(), "complementos");
+            List<ComplementoCobertura> coberturas = buscarAdicionaisPorItemId(itemBase.id(), "coberturas");
+
+            itensDetalhados.add(new VendaItemDetalhado(
+                    itemBase.id(),
+                    produto,
+                    itemBase.quantidade(),
+                    itemBase.precoUnitario(),
+                    complementos,
+                    coberturas
+            ));
+        }
+
+
+        return new VendaDetalhada(
+                vendaBase.id(),
+                vendaBase.dataVenda(),
+                vendaBase.valorTotal(),
+                vendaBase.formaPagamento(),
+                itensDetalhados
+        );
+    }
+
+    public List<Venda> listarTodasAsVendasBase() throws SQLException {
+        List<Venda> vendas = new ArrayList<>();
+        String sql = "SELECT * FROM vendas ORDER BY data_venda DESC";
+
+        try (Connection conexao = FabricaConexao.getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet resultado = stmt.executeQuery()) {
+
+            while (resultado.next()) {
+                vendas.add(new Venda(
+                        resultado.getLong("id"),
+                        resultado.getObject("data_venda", Date.class),
+                        resultado.getBigDecimal("valor_total"),
+                        resultado.getString("forma_pagamento"),
+                        null
+                ));
+            }
+        }
+        return vendas;
+    }
+
+    private Venda buscarVendaBasePorId(Long vendaId) throws SQLException, Exception {
+        String sql = "SELECT * FROM vendas WHERE id = ?";
+
+        try (Connection conexao = FabricaConexao.getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setLong(1, vendaId);
+            try(ResultSet resultado = stmt.executeQuery()) {
+
+                while (resultado.next()) {
+                    Long id = resultado.getLong("id");
+                    return new Venda(
+                            id,
+                            resultado.getDate("data_venda"),
+                            resultado.getBigDecimal("valor_total"),
+                            resultado.getString("forma_pagamento"),
+                            buscarItensBasePorVendaId(id)
+                    );
+                }
+            }catch (SQLException e) {
+                System.err.println("Erro ao buscar VendaBase!");
+                e.printStackTrace();
+
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+        return null;
+    }
+
+    private List<VendaItem> buscarItensBasePorVendaId(Long vendaId) throws SQLException, Exception {
+        String sql = "SELECT * FROM venda_itens WHERE id = ?";
+        List<VendaItem> itens = new ArrayList<>();
+
+        try(Connection conexao = FabricaConexao.getConexao();
+            PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setLong(1, vendaId);
+
+            ResultSet resultado = stmt.executeQuery();
+            while (resultado.next()) {
+                Long idItem = resultado.getLong("id");
+
+                List<ComplementoCobertura> complementos = buscarAdicionaisPorItemId(idItem, "complementos");
+                List<Long> complementosIds = new ArrayList<>();
+                complementos.stream().forEach(c -> complementosIds.add(c.id()));
+
+                List<ComplementoCobertura> coberturas = buscarAdicionaisPorItemId(idItem, "complementos");
+                List<Long> coberturasIds = new ArrayList<>();
+                complementos.stream().forEach(c -> coberturasIds.add(c.id()));
+
+                itens.add(new VendaItem(
+                        idItem,
+                        resultado.getLong("produto_id"),
+                        resultado.getInt("quantidade"),
+                        resultado.getBigDecimal("preco_unitario_da_venda"),
+                        complementosIds,
+                        coberturasIds
+                        )
+                );
+            }
+
+            return itens;
+        }catch (SQLException e) {
+            System.err.println("Erro ao buscar ItensBase!");
+            e.printStackTrace();
+
+        } catch (Exception e) {
+            throw e;
+        }
+        return null;
+    }
+
+    private List<ComplementoCobertura> buscarAdicionaisPorItemId(Long itemId, String tipo) throws SQLException, Exception {
+        ComplementoCoberturaDAO dao = new ComplementoCoberturaDAO();
+        List<ComplementoCobertura> lista = new ArrayList<>();
+        String tabelaLigacao = tipo.equals("complementos") ? "venda_item_complementos" : "venda_item_coberturas";
+        String colunaId = tipo.equals("complementos") ? "complemento_id" : "cobertura_id";
+
+        String sql = "SELECT "+ colunaId +" FROM "+ tabelaLigacao +" WHERE venda_item_id = ?";
+
+        try (Connection conexao = FabricaConexao.getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setLong(1, itemId);
+            try (ResultSet resultado = stmt.executeQuery()) {
+                while (resultado.next()) {
+                    Long adicionalId = resultado.getLong(colunaId);
+                    lista.add(dao.buscarID(adicionalId, tipo));
+                }
+
+            }catch (SQLException e) {
+                System.err.println("Erro ao buscar Adicionais!");
+                e.printStackTrace();
+
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+        return lista;
+    }
 }

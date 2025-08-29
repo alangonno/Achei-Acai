@@ -3,6 +3,7 @@ package br.com.acheiacai.controller;
 import br.com.acheiacai.dao.VendaDAO;
 import br.com.acheiacai.model.Produto;
 import br.com.acheiacai.model.Venda;
+import br.com.acheiacai.model.VendaDetalhada;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -13,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.SQLException;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/vendas/*")
@@ -20,6 +23,46 @@ public class VendasServlet extends HttpServlet {
 
     VendaDAO vendaDAO = new VendaDAO();
     ObjectMapper conversor = new ObjectMapper();
+
+    protected void doGet (HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            Long id = extrairIdUrl(request);
+
+            if (id == null) {
+                List<Venda> vendas = vendaDAO.listarTodasAsVendasBase();
+                String jsonVendas = conversor.writeValueAsString(vendas);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().print(jsonVendas);
+                return ;
+            }
+
+            VendaDetalhada vendaDetalhada= vendaDAO.buscarPorIdVendaDetalhado(id);
+            String jsonVendaDetalhada= conversor.writeValueAsString(vendaDetalhada);
+            response.setContentType("application/json");
+
+            if (vendaDetalhada != null) {
+                response.getWriter().print(jsonVendaDetalhada);
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().print("{\"erro\":\"Venda não encontrada.\"}");
+            }
+
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            String erroJson = "Falha ao processar a requisição de vendas. detalhe: " + e.getMessage();
+            response.getWriter().print(erroJson);
+
+            e.printStackTrace();
+        }
+
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -64,6 +107,27 @@ public class VendasServlet extends HttpServlet {
 
         }
 
+    protected void doDelete (HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
+    }
+
+    private Long extrairIdUrl(HttpServletRequest request) throws NumberFormatException {
+
+        String id_url = request.getPathInfo();
+
+        if (id_url == null || id_url.equals("/")) {
+            return null;
+        }
+
+        try {
+            id_url = id_url.substring(1);
+            return Long.parseLong(id_url);
+
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+    }
 
 }
