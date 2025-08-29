@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import GerenciadorDeEntidade from "../components/GerenciadorDeEntidade";
+import GerenciadorDeEntidade from "../components/ProdutosComponents/GerenciadorDeEntidade";
 import * as produtoService from '../services/produtoService';
 import * as coberturasService from '../services/coberturasService';
 import * as complementosService from '../services/complementosService';
@@ -42,9 +41,18 @@ function GestaoCardapioPage() {
     return (
         <div className="gestao-cardapio-container">
             <div className="abas-de-navegacao">
-                <button onClick={() => setAbaAtiva('produtos')}>Produtos</button>
-                <button onClick={() => setAbaAtiva('complementos')}>Complementos</button>
-                <button onClick={() => setAbaAtiva('coberturas')}>Coberturas</button>
+                <button 
+                    className={abaAtiva === 'produtos' ? 'aba-ativa' : ''} 
+                    onClick={() => setAbaAtiva('produtos')}
+                >Produtos</button>
+                <button 
+                    className={abaAtiva === 'complementos' ? 'aba-ativa' : ''}
+                    onClick={() => setAbaAtiva('complementos')}
+                >Complementos</button>
+                <button 
+                    className={abaAtiva === 'coberturas' ? 'aba-ativa' : ''}
+                    onClick={() => setAbaAtiva('coberturas')}
+                >Coberturas</button>
             </div>
 
             <div className="conteudo-da-aba">

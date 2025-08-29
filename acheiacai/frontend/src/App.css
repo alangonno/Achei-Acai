@@ -40,3 +40,10 @@
 .read-the-docs {
   color: #888;
 }
+
+.pdv-pagina {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}

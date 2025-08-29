@@ -45,9 +45,6 @@ function FormularioGenerico({ dadosIniciais, colunas, onSave, onCancel, nomeDaEn
 
             {colunas.map((coluna) => {
                 if (coluna.accessor === 'id') return null;
-
-                // --- A NOVA LÓGICA ESTÁ AQUI ---
-                // Verifica se o inputType é 'select'
                 if (coluna.inputType === 'select') {
                     return (
                         <div className="form-group" key={coluna.accessor}>
