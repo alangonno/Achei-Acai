@@ -35,30 +35,50 @@ function cartReducer(state, action) {
     }
     
     case Acoes.ADICIONAR_COMPLEMENTO: {
-        const complemento = action.payload;
-        return {
-            ...state,
-            itens: state.itens.map(item => 
-                // Adiciona o complemento apenas ao item que está atualmente selecionado
-                item.cartItemId === state.itemSelecionadoId
-                ? { ...item, complementos: [...item.complementos, complemento] }
-                : item
-            )
-        };
-    }
+            const complementoPayload = action.payload;
+            return {
+                ...state,
+                itens: state.itens.map(item => {
+                    if (item.cartItemId === state.itemSelecionadoId) {
+                        const indexExistente = item.complementos.findIndex(c => c.id === complementoPayload.id);
+                        const permiteMultiplos = complementoPayload.nome.toLowerCase().includes('fini');
 
-    case Acoes.ADICIONAR_COBERTURA: {
-        const cobertura = action.payload;
-        return {
-            ...state,
-            itens: state.itens.map(item => 
-                // Adiciona o complemento apenas ao item que está atualmente selecionado
-                item.cartItemId === state.itemSelecionadoId
-                ? { ...item, coberturas: [...item.coberturas, cobertura] }
-                : item
-            )
-        };
-    }
+                        if (indexExistente > -1) {
+                            if (permiteMultiplos) {
+                                const novosComplementos = [...item.complementos];
+                                novosComplementos[indexExistente] = { ...novosComplementos[indexExistente], quantidade: novosComplementos[indexExistente].quantidade + 1 };
+                                return { ...item, complementos: novosComplementos };
+                            }
+                            return item;
+                        } else {
+                            const novoComplemento = { ...complementoPayload, quantidade: 1 };
+                            return { ...item, complementos: [...item.complementos, novoComplemento] };
+                        }
+                    }
+                    return item;
+                }),
+            };
+        }
+        
+
+        case Acoes.ADICIONAR_COBERTURA: {
+            const coberturaPayload = action.payload;
+            return {
+                ...state,
+                itens: state.itens.map(item => {
+                    if (item.cartItemId === state.itemSelecionadoId) {
+                    
+                        const coberturaJaExiste = item.coberturas.some(c => c.id === coberturaPayload.id);
+                        if (coberturaJaExiste) {
+                            return item; 
+                        }
+                        return { ...item, coberturas: [...item.coberturas, coberturaPayload] };
+                    }
+                    return item;
+                }),
+            };
+        }
+
     
     case Acoes.REMOVER_ITEM: {
         const cartItemIdParaRemover = action.payload;
@@ -97,7 +117,7 @@ export function CartProvider({ children }) {
     const precoBase = (item.produto.preco || 0) * item.quantidade;
     
     // Garante que o preço do complemento seja 0 se não estiver definido
-    const precoComplementos = item.complementos.reduce((total, comp) => total + (comp.preco || 0), 0);
+    const precoComplementos = item.complementos.reduce((total, comp) =>  total + ((comp.preco || 0) * comp.quantidade), 0);
     
     // Garante que o preço da cobertura seja 0 se não estiver definido
     const precoCoberturas = item.coberturas.reduce((total, cob) => total + (cob.preco || 0), 0);

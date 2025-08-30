@@ -44,7 +44,7 @@ function HistoricoVendasPage() {
                 <tbody>
                     {vendas.map(venda => (
                         <tr key={venda.id}>
-                            <td>#{venda.id}</td>
+                            <td>{venda.id}</td>
                             <td>{new Date(venda.dataVenda).toLocaleString('pt-BR')}</td>
                             <td>{venda.formaPagamento}</td>
                             <td>{venda.valorTotal.toFixed(2)}</td>
@@ -58,7 +58,7 @@ function HistoricoVendasPage() {
                 </tbody>
             </table>
 
-            {/* O Modal para exibir os detalhes só é renderizado quando uma venda é selecionada */}
+            
             {vendaSelecionadaId && (
                 <VendaDetalheModal 
                     vendaId={vendaSelecionadaId} 

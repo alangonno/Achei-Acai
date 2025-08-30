@@ -25,7 +25,7 @@ function VendaDetalheModal({ vendaId, onClose }) {
             }
         };
         carregarDetalhes();
-    }, [vendaId]); // Este efeito roda sempre que o 'vendaId' mudar
+    }, [vendaId]);
 
     return (
         // O overlay que escurece o fundo
@@ -41,7 +41,7 @@ function VendaDetalheModal({ vendaId, onClose }) {
                     <>
                         <h2>Detalhes da Venda #{venda.id}</h2>
                         <div className="venda-info">
-                            <p><strong>Data:</strong> {new Date(venda.dataVenda).toLocaleString('pt-BR')}</p>
+                            <p><strong>Data e Hora:</strong> {new Date(venda.dataVenda).toLocaleString('pt-BR')}</p>
                             <p><strong>Pagamento:</strong> {venda.formaPagamento}</p>
                             <p><strong>Total: R$ {venda.valorTotal.toFixed(2)}</strong></p>
                         </div>
@@ -52,13 +52,13 @@ function VendaDetalheModal({ vendaId, onClose }) {
                                 <li key={item.id} className="item-detalhe">
                                     <div className="item-produto-info">
                                         <strong>{item.quantidade}x {item.produto.nome} ({item.produto.variacao})</strong>
-                                        <span>R$ {item.precoUnitarioNaVenda.toFixed(2)}</span>
+                                        <span>R$ {item.precoUnitario.toFixed(2)}</span>
                                     </div>
                                     
                                     {item.complementos && item.complementos.length > 0 && (
                                         <ul className="lista-adicionais-detalhe">
                                             <span>Complementos:</span>
-                                            {item.complementos.map(c => <li key={c.id}>- {c.nome}</li>)}
+                                            {item.complementos.map(c => <li key={c.id}>- {c.nome} ({c.quantidade}x)</li>)}
                                         </ul>
                                     )}
                                     {item.coberturas && item.coberturas.length > 0 && (
