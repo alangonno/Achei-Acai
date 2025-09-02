@@ -51,7 +51,7 @@ function VendaDetalheModal({ vendaId, onClose }) {
                             {venda.itens.map(item => (
                                 <li key={item.id} className="item-detalhe">
                                     <div className="item-produto-info">
-                                        <strong>{item.quantidade}x {item.produto.nome} ({item.produto.variacao})</strong>
+                                        <strong>{item.quantidade}x {item.produto.nome} ({item.produto.variacao}) {item.produto.tamanho} </strong>
                                         <span>R$ {item.precoUnitario.toFixed(2)}</span>
                                     </div>
                                     

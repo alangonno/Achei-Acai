@@ -14,3 +14,7 @@ export const buscarVendaPorId = (id) => {
 export const buscarTodasVendas = () => {
     return apiClient.get(resource);
 };
+
+export const deletarVendaPorId = (id) => {
+    return apiClient.delete(`${resource}/${id}`)
+}

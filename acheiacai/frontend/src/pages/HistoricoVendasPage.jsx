@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { buscarTodasVendas } from '../services/vendaService.js';
+import { buscarTodasVendas, deletarVendaPorId } from '../services/vendaService.js';
 import VendaDetalheModal from '../components/ProdutosComponents/VendaDetalheModal.jsx';
 
 function HistoricoVendasPage() {
@@ -10,20 +10,35 @@ function HistoricoVendasPage() {
     const [error, setError] = useState(null);
     const [vendaSelecionadaId, setVendaSelecionadaId] = useState(null);
 
-    useEffect(() => {
-        const carregarVendas = async () => {
+    const handleExcluir = async (itemId) => {
+        if (window.confirm(`Tem a certeza de que deseja excluir a venda com ID ${itemId}?`)) {
             try {
-                const dados = await buscarTodasVendas();
-                setVendas(dados);
+                await deletarVendaPorId(itemId);
+                carregarVendas();
             } catch (err) {
-                setError("Falha ao carregar o histórico de vendas.");
-                console.error(err);
-            } finally {
-                setLoading(false);
+                setError(`Falha ao excluir o item: ${err.message}`);
             }
-        };
+        }
+    };
+    
+    const carregarVendas = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const dados = await buscarTodasVendas();
+            setVendas(dados);
+        } catch (err) {
+            setError("Falha ao carregar o histórico de vendas.");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    useEffect(() => {
         carregarVendas();
-    }, []);
+    }, []); 
 
     if (loading) return <p>A carregar histórico...</p>;
     if (error) return <p>Erro: {error}</p>;
@@ -50,7 +65,11 @@ function HistoricoVendasPage() {
                             <td>{venda.valorTotal.toFixed(2)}</td>
                             <td>
                                 <button className="botao-detalhes" onClick={() => setVendaSelecionadaId(venda.id)}>
-                                    Ver Detalhes
+                                    Detalhes
+                                </button>
+                                <button className="delete-button" onClick={() =>
+                                handleExcluir(venda.id)}> 
+                                    Deletar 
                                 </button>
                             </td>
                         </tr>
