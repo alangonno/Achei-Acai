@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { buscarTodasVendas, deletarVendaPorId } from '../services/vendaService.js';
-import VendaDetalheModal from '../components/ProdutosComponents/VendaDetalheModal.jsx';
+import VendaDetalheModal from '../components/VendasComponents/VendaDetalheModal.jsx';
 
 function HistoricoVendasPage() {
     const [vendas, setVendas] = useState([]);

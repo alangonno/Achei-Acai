@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import GestaoCardapioPage from './pages/GestaoCardapioPage';
-import PontoDeVendaPage from './pages/PontodeVendaPage';
+import PontoDeVendaPage from './pages/PontoDeVendaPage';
 import { CartProvider } from './contexts/CartContext';
 import HistoricoVendasPage from './pages/HistoricoVendasPage';
 
