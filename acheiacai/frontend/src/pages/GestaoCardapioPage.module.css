@@ -1,0 +1,81 @@
+/* NÍVEL 3 (REFEITO): ESTILOS MOBILE-FIRST PARA A PÁGINA DE GESTÃO */
+
+/* --- Estilos Base (para Celulares e Telas Pequenas) --- */
+
+.gestaoCardapioContainer {
+  /* No mobile, o container não precisa de sombra ou bordas arredondadas, 
+     ele se integra melhor ao layout geral da tela. */
+  background-color: var(--fundo-elemento);
+  width: 100%;
+}
+
+.abasDeNavegacao {
+  display: flex;
+  border-bottom: 2px solid var(--cor-borda);
+  
+  /* Permite rolar as abas horizontalmente se não couberem na tela */
+  overflow-x: auto; 
+  white-space: nowrap; /* Impede que os botões quebrem linha */
+
+  /* Estilização da barra de rolagem (opcional, mas melhora o visual) */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.abasDeNavegacao::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+
+.abasDeNavegacao button {
+  flex-shrink: 0; /* Impede que os botões encolham */
+  border: none;
+  background-color: transparent;
+  padding: 0.8rem 1.2rem; /* Padding adaptado para toque */
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: #555;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.abasDeNavegacao button:hover {
+  color: var(--roxo-claro);
+}
+
+.abasDeNavegacao .abaAtiva {
+  color: var(--roxo-principal);
+  font-weight: 600;
+  border-bottom-color: var(--roxo-principal);
+}
+
+.conteudoDaAba {
+  padding-top: 1.5rem; /* Espaçamento entre as abas e o conteúdo */
+}
+
+
+/* --- Estilos para Telas Maiores (Tablet e Desktop) --- */
+/* A mágica acontece aqui: aplicamos estilos adicionais a partir de 768px de largura */
+@media (min-width: 768px) {
+  .gestaoCardapioContainer {
+    /* Em telas grandes, o container vira um "painel" destacado */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--sombra-suave);
+  }
+
+  .abasDeNavegacao {
+    /* Não precisamos mais de rolagem horizontal */
+    overflow-x: visible;
+  }
+
+  .abasDeNavegacao button {
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .conteudoDaAba {
+    padding-top: 2rem;
+  }
+}

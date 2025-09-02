@@ -1,8 +1,8 @@
 // frontend/src/components/Carrinho.jsx
 
 import React, { useState } from 'react';
-import { useCart } from '../contexts/CartContext';
-import { criarVenda } from '../services/vendaService';
+import { useCart } from '../../contexts/CartContext';
+import { criarVenda } from '../../services/vendaService';
 
 function Carrinho() {
     const { itens, itemSelecionadoId, dispatch, Acoes, valorTotalCarrinho, calcularTotalItem } = useCart();

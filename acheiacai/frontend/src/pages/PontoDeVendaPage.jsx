@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import Carrinho from '../components/Carrinho';
+import Carrinho from '../components/VendasComponents/Carrinho';
 import { useCart } from '../contexts/CartContext';
 
 import * as produtoService from '../services/produtoService';

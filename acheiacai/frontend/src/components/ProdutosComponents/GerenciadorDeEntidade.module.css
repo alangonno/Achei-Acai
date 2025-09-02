@@ -1,0 +1,78 @@
+/* NÍVEL 4: ESTILOS PARA O COMPONENTE GERENCIADOR */
+
+/* --- Estilos Base (Mobile) --- */
+
+.gerenciadorEntidade {
+  width: 100%;
+}
+
+/* Header que agrupa o Título e a Barra de Ferramentas */
+.header {
+  display: flex;
+  flex-direction: column; /* No mobile, título fica em cima do botão */
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.header h1 {
+  font-size: 1.6rem;
+  color: var(--roxo-principal);
+  font-weight: 700;
+}
+
+/* Botão principal de Ação (Adicionar) */
+.botaoAdicionar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* Espaço entre o ícone e o texto */
+
+  background-color: var(--amarelo-destaque);
+  color: var(--texto-principal);
+  
+  border: none;
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.botaoAdicionar:hover {
+  background-color: #e6c300; /* Um tom de amarelo um pouco mais escuro */
+  transform: translateY(-2px);
+}
+
+/* Ícone de "+" antes do texto do botão */
+.botaoAdicionar::before {
+  content: '+';
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+
+/* --- Estilos para Telas Maiores (Tablet e Desktop) --- */
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row; /* Título à esquerda, botão à direita */
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .header h1 {
+    font-size: 1.8rem;
+  }
+
+  .botaoAdicionar {
+    /* No desktop, o botão pode ser um pouco menor no width */
+    width: auto;
+    padding: 0.8rem 1.5rem;
+  }
+}

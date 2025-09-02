@@ -3,6 +3,7 @@ import GerenciadorDeEntidade from "../components/ProdutosComponents/GerenciadorD
 import * as produtoService from '../services/produtoService';
 import * as coberturasService from '../services/coberturasService';
 import * as complementosService from '../services/complementosService';
+import styles from './GestaoCardapioPage.module.css';
 
 function GestaoCardapioPage() {
 
@@ -39,8 +40,8 @@ function GestaoCardapioPage() {
     { header: 'Preço Adicional (R$)', accessor: 'preco', type: 'number' }];
 
     return (
-        <div className="gestao-cardapio-container">
-            <div className="abas-de-navegacao">
+        <div className={styles.gestaoCardapioContainer}>
+            <div className={styles.abasDeNavegacao}>
                 <button 
                     className={abaAtiva === 'produtos' ? 'aba-ativa' : ''} 
                     onClick={() => setAbaAtiva('produtos')}
@@ -55,7 +56,7 @@ function GestaoCardapioPage() {
                 >Coberturas</button>
             </div>
 
-            <div className="conteudo-da-aba">
+            <div className={styles.conteudoDaAba}>
                 {abaAtiva === 'produtos' && <GerenciadorDeEntidade servico={produtoService} nomeDaEntidade="produtos" colunas={colunasProdutos} aba={abaAtiva} />}
 
                 {abaAtiva === 'complementos' && <GerenciadorDeEntidade servico={complementosService} nomeDaEntidade="complementos" colunas={colunasComplementos} aba={abaAtiva} />}

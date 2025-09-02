@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Tabela from "./Tabela";
 import FormularioGenerico from "./FormularioGenerico"; 
+import styles from './GerenciadorDeEntidade.module.css';
 
 
 function GerenciadorDeEntidade({ servico, nomeDaEntidade, colunas }) {
@@ -71,16 +72,19 @@ function GerenciadorDeEntidade({ servico, nomeDaEntidade, colunas }) {
     if (error) return <p>Ocorreu um erro: {error}</p>;
 
     return (
-        <div className="gerenciador-entidade">
-            <h1>Gestão de {nomeDaEntidade}</h1>
-            
-            <div className="toolbar">
-                {!exibirFormulario && (
-                    <button onClick={handleAdicionar}>
-                        Adicionar {nomeDaEntidade}
-                    </button>
-                )}
+        <div className={styles.gerenciadorEntidade}>
+            <div className={styles.header}>
+                <h1>Gestão de {nomeDaEntidade}</h1>
+                
+                <div className={styles.toolbar}>
+                    {!exibirFormulario && (
+                        <button className={styles.botaoAdicionar} onClick={handleAdicionar}>
+                            Adicionar {nomeDaEntidade}
+                        </button>
+                    )}
+                </div>
             </div>
+
 
             {exibirFormulario ? (
                 <FormularioGenerico

@@ -1,0 +1,127 @@
+/* NÍVEL 5 (REFEITO): ESTILOS DA TABELA EM FORMATO DE CARD PARA MOBILE */
+
+/* --- Estilos Base (Mobile) --- */
+
+.tableWrapper {
+  /* O wrapper não precisa mais da rolagem */
+  width: 100%;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* 1. Escondemos o cabeçalho original no mobile */
+.dataTable thead {
+  display: none;
+}
+
+/* 2. Cada linha vira um card */
+.dataTable tr {
+  display: block; /* A mágica começa aqui */
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  background-color: var(--fundo-elemento);
+  border: 1px solid var(--cor-borda);
+  box-shadow: 0 2px 6px var(--sombra-suave);
+  padding: 0.5rem 1rem;
+}
+
+/* 3. Cada célula ocupa uma linha inteira */
+.dataTable td {
+  display: block;
+  text-align: right; /* Alinha o dado à direita */
+  padding: 0.8rem 0;
+  position: relative;
+  border-bottom: 1px dashed var(--cor-borda);
+}
+
+/* A última célula do card não precisa de borda inferior */
+.dataTable td:last-child {
+  border-bottom: none;
+}
+
+/* 4. Criamos o "label" (título da coluna) usando um pseudo-elemento */
+.dataTable td::before {
+  content: attr(data-label); /* Pega o texto do atributo data-label que colocamos no JSX */
+  position: absolute;
+  left: 0;
+  width: 50%;
+  padding-right: 10px;
+  white-space: nowrap;
+  text-align: left;
+  font-weight: 600;
+  color: var(--roxo-principal);
+}
+
+/* Estilos específicos para a célula de ações no mobile */
+.actions {
+  display: flex;
+  justify-content: flex-end; /* Alinha os botões à direita no card */
+  gap: 0.75rem;
+}
+
+.actions button {
+  padding: 0.5rem 1rem; /* Botões um pouco maiores para facilitar o toque */
+  margin-right: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--texto-claro);
+  transition: opacity 0.2s ease;
+}
+.actions button:hover { opacity: 0.85; }
+.actions .editButton { background-color: var(--roxo-claro); }
+.actions .deleteButton { background-color: #e53e3e; }
+
+
+/* --- Estilos para Telas Maiores (Tablet e Desktop) --- */
+/* Revertemos tudo para uma tabela normal a partir de 768px */
+@media (min-width: 768px) {
+  /* 1. Mostramos o cabeçalho novamente */
+  .dataTable thead {
+    display: table-header-group;
+    background-color: var(--fundo-pagina);
+  }
+
+  /* 2. As linhas voltam ao normal */
+  .dataTable tr {
+    display: table-row;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    border-bottom: 1px solid var(--cor-borda);
+    transition: background-color 0.2s ease;
+  }
+  .dataTable tbody tr:nth-of-type(even) { background-color: #fdfcff; }
+  .dataTable tbody tr:hover { background-color: #f4f2ff; }
+
+  /* 3. Células voltam ao normal */
+  .dataTable td {
+    display: table-cell;
+    text-align: left;
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: none;
+  }
+
+  /* 4. Escondemos os labels que criamos com ::before */
+  .dataTable td::before {
+    display: none;
+  }
+
+  /* Estilos do cabeçalho que só se aplicam no desktop */
+  .dataTable th {
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--roxo-principal);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--cor-borda);
+  }
+}

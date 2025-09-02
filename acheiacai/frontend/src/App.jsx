@@ -14,16 +14,16 @@ function App() {
           <header className="app-header">
             <h1>Achei Açaí</h1>
             <nav>
-              <Link to="/">Gestão do Cardápio</Link>
-              <Link to="/pdv">Ponto de Venda</Link>
+              <Link to="/gdc">Gestão do Cardápio</Link>
+              <Link to="/">Ponto de Venda</Link>
               <Link to="/hdv">Historico de Venda</Link>
             </nav>
           </header>
 
           <main>
             <Routes>
-              <Route path="/" element={<GestaoCardapioPage />} />
-              <Route path="/pdv" element={<PontoDeVendaPage />} />
+              <Route path="/gdc" element={<GestaoCardapioPage />} />
+              <Route path="/" element={<PontoDeVendaPage />} />
               <Route path="/hdv" element={<HistoricoVendasPage />} />
             </Routes>
           </main>

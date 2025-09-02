@@ -1,4 +1,4 @@
-
+import styles from './FormularioGenerico.module.css';
 import React, { useState, useEffect } from 'react';
 
 // - dadosIniciais: um objeto com os dados do item a ser editado, ou null se for para criar um novo.
@@ -40,53 +40,54 @@ function FormularioGenerico({ dadosIniciais, colunas, onSave, onCancel, nomeDaEn
     const modoEdicao = dadosIniciais != null;
 
     return (
-        <form className="form-entidade" onSubmit={handleSubmit}>
+        <form className={styles.formEntidade} onSubmit={handleSubmit}>
             <h2>{modoEdicao ? `Editar ${nomeDaEntidade}` : `Adicionar Novo ${nomeDaEntidade}`}</h2>
 
-            {colunas.map((coluna) => {
-                if (coluna.accessor === 'id') return null;
-                if (coluna.inputType === 'select') {
+            <div className={styles.fieldsGrid}>
+                {colunas.map((coluna) => {
+                    if (coluna.accessor === 'id') return null;
+                    if (coluna.inputType === 'select') {
+                        return (
+                            <div className={styles.formGroup} key={coluna.accessor}>
+                                <label htmlFor={coluna.accessor}>{coluna.header}</label>
+                                <select
+                                    id={coluna.accessor}
+                                    name={coluna.accessor}
+                                    value={formData[coluna.accessor] || ''}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="" disabled>Selecione uma opção</option>
+                                    {coluna.options.map(option => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        );
+                    }
+                    // Se não for 'select', renderiza o input padrão como antes
                     return (
-                        <div className="form-group" key={coluna.accessor}>
+                        <div className={styles.formGroup} key={coluna.accessor}>
                             <label htmlFor={coluna.accessor}>{coluna.header}</label>
-                            <select
+                            <input
+                                type={coluna.type || 'text'}
                                 id={coluna.accessor}
                                 name={coluna.accessor}
                                 value={formData[coluna.accessor] || ''}
                                 onChange={handleChange}
                                 required
-                            >
-                                <option value="" disabled>Selecione uma opção</option>
-                                {coluna.options.map(option => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
+                                step={coluna.type === 'number' ? '0.01' : undefined}
+                            />
                         </div>
                     );
-                }
+                })}
+            </div>
 
-                // Se não for 'select', renderiza o input padrão como antes
-                return (
-                    <div className="form-group" key={coluna.accessor}>
-                        <label htmlFor={coluna.accessor}>{coluna.header}</label>
-                        <input
-                            type={coluna.type || 'text'}
-                            id={coluna.accessor}
-                            name={coluna.accessor}
-                            value={formData[coluna.accessor] || ''}
-                            onChange={handleChange}
-                            required
-                            step={coluna.type === 'number' ? '0.01' : undefined}
-                        />
-                    </div>
-                );
-            })}
-
-            <div className="form-actions">
-                <button type="submit" className="btn-salvar">Salvar</button>
-                <button type="button" onClick={onCancel} className="btn-cancelar">Cancelar</button>
+            <div className={styles.formActions}>
+                <button type="submit" className={styles.btnSalvar}>Salvar</button>
+                <button type="button" onClick={onCancel} className={styles.btnCancelar}>Cancelar</button>
             </div>
         </form>
     );
