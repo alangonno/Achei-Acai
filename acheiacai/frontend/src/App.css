@@ -1,21 +1,25 @@
-/* NÍVEL 2: ESTILOS DO LAYOUT PRINCIPAL (APP.JSX) */
+/* NÍVEL 2: ESTILOS DO LAYOUT PRINCIPAL DA APLICAÇÃO (APP.JSX) */
+
+/* --- ESTRUTURA GERAL --- */
 
 .app-container {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  flex-direction: column; /* Organiza os filhos (header, main) em uma coluna */
+  min-height: 100vh;     /* Garante que o container ocupe no mínimo toda a altura da tela */
 }
 
-/* --- Cabeçalho (sem alterações) --- */
+/* --- CABEÇALHO PRINCIPAL --- */
+
 .app-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Título na esquerda, navegação na direita */
   align-items: center;
   background-color: var(--roxo-principal);
   color: var(--texto-claro);
   padding: 1rem 2rem;
   box-shadow: 0 4px 8px var(--sombra-suave);
   z-index: 10;
+  position: relative; /* Essencial para posicionar o menu dropdown abaixo dele */
 }
 
 .app-header h1 {
@@ -23,37 +27,119 @@
   font-weight: 600;
 }
 
-.app-header nav {
+
+/* --- NAVEGAÇÃO RESPONSIVA (MOBILE FIRST) --- */
+
+/* Base (Mobile): O botão hambúrguer é visível */
+.menu-toggle {
   display: flex;
-  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1100; /* Garante que fique acima do menu dropdown */
 }
 
-.app-header nav a {
+/* O menu de navegação (escondido e posicionado para o dropdown) */
+.nav-menu {
+  position: absolute;   /* Posicionado em relação ao header */
+  top: 100%;          /* Começa exatamente abaixo do header */
+  left: 0;
+  right: 0;           /* Ocupa a largura toda */
+  
+  background-color: var(--roxo-principal);
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+
+  /* Animação de "descer" e aparecer */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px); /* Começa um pouco para cima */
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+/* Quando o menu está ativo (aberto) */
+.nav-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0); /* Desce para a posição final */
+}
+
+/* Links dentro do menu dropdown */
+.nav-menu a {
   color: var(--texto-claro);
-  text-decoration: none;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  position: relative;
-  transition: color 0.2s ease-in-out;
+  text-decoration: none;
+  padding: 1rem 2rem;
+  width: 100%;
+  text-align: center;
+}
+.nav-menu a:hover {
+  background-color: var(--roxo-claro);
+  color: var(--texto-claro);
 }
 
-.app-header nav a:hover {
-  color: var(--amarelo-destaque);
+/* --- Estilos para Telas Maiores (Tablet e Desktop) --- */
+@media (min-width: 768px) {
+  /* 1. Escondemos o botão hambúrguer */
+  .menu-toggle {
+    display: none;
+  }
+
+  /* 2. Revertemos o menu para o estilo original horizontal */
+  .nav-menu {
+    position: static;
+    height: auto;
+    width: auto;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+    
+    flex-direction: row;
+    gap: 1.5rem;
+    
+    /* Reverte as propriedades da animação */
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: none;
+  }
+  
+  /* Ajustes finos nos links para o desktop */
+  .nav-menu a {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    width: auto;
+    background-color: transparent; /* Garante que não tenha o fundo do hover */
+  }
+
+  .nav-menu a:hover {
+    color: var(--amarelo-destaque);
+  }
+  
+  /* Estilo do link ativo que só faz sentido no desktop */
+  .nav-menu a.active {
+    color: var(--amarelo-destaque);
+    font-weight: 700;
+  }
 }
 
-.app-header nav a.active {
-  color: var(--amarelo-destaque);
-  font-weight: 700;
-}
 
-
-/* --- Conteúdo Principal (COM AS ALTERAÇÕES) --- */
+/* --- ÁREA DE CONTEÚDO PRINCIPAL --- */
 
 /* Base (Mobile): O conteúdo ocupa a tela toda com um pequeno padding */
 main {
-  flex: 1;
+  flex: 1; /* Faz com que este elemento cresça e ocupe todo o espaço restante */
   width: 100%;
   padding: 1rem; /* Padding menor para telas pequenas */
 }
@@ -67,3 +153,4 @@ main {
     margin-right: auto; /* Centraliza na horizontal */
   }
 }
+
