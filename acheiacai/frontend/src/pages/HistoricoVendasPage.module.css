@@ -1,0 +1,25 @@
+/* Estilos para a página de Histórico de Vendas */
+
+.historicoVendasPagina {
+  background-color: var(--fundo-elemento);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--sombra-suave);
+}
+
+.historicoVendasPagina h1 {
+  font-size: 1.6rem;
+  color: var(--roxo-principal);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+@media (min-width: 768px) {
+  .historicoVendasPagina {
+    padding: 2rem;
+  }
+  .historicoVendasPagina h1 {
+    font-size: 1.8rem;
+  }
+}

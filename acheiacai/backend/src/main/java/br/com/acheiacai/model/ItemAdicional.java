@@ -1,4 +1,11 @@
 package br.com.acheiacai.model;
 
-public class ItemAdicional {
-}
+import java.math.BigDecimal;
+
+public record ItemAdicional(
+            Long id,
+            String nome,
+            BigDecimal preco,
+            int quantidade
+    ) {}
+

@@ -13,17 +13,38 @@ import java.util.List;
 
 public class VendaDAO {
 
+    public List<Venda> listarTodasAsVendasBase() throws SQLException {
+        List<Venda> vendas = new ArrayList<>();
+        String sql = "SELECT * FROM vendas ORDER BY data_venda DESC";
+
+        try (Connection conexao = FabricaConexao.getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet resultado = stmt.executeQuery()) {
+
+            while (resultado.next()) {
+                vendas.add(new Venda(
+                        resultado.getLong("id"),
+                        resultado.getObject("data_venda", Date.class),
+                        resultado.getBigDecimal("valor_total"),
+                        resultado.getString("forma_pagamento"),
+                        null
+                ));
+            }
+        }
+        return vendas;
+    }
+
     public Venda salvar(Venda venda) throws SQLException{
         String sqlVenda = "INSERT INTO vendas(data_venda, valor_total, forma_pagamento) values (?, ?, ?)";
 
         String sqlVendaItem = "INSERT INTO venda_itens(venda_id, produto_id, quantidade, preco_unitario_da_venda) " +
                 "values (?, ?, ?, ?)";
 
-        String sqlVendaComplemento = "INSERT INTO venda_item_complementos(venda_item_id, complemento_id) " +
-                "values (?, ?)";
+        String sqlVendaComplemento = "INSERT INTO venda_item_complementos(venda_item_id, complemento_id, quantidade) " +
+                "values (?, ?, ?)";
 
-        String sqlVendaCobertura = "INSERT INTO venda_item_coberturas(venda_item_id, cobertura_id) " +
-                "values (?, ?)";
+        String sqlVendaCobertura = "INSERT INTO venda_item_coberturas(venda_item_id, cobertura_id, quantidade) " +
+                "values (?, ?, ?)";
 
         Long idVenda = null;
         Connection conexao = null;
@@ -74,14 +95,16 @@ public class VendaDAO {
                         }
                     }
 
-                    for (Long idComplemento : item.complementosIds()) {//cria vendaItemComplementos
+                    for (ItemAdicional complemento : item.complementos()) {//cria vendaItemComplementos
                         stmtVendaComplemento.setLong(1, idVendaItem);
-                        stmtVendaComplemento.setLong(2, idComplemento);
+                        stmtVendaComplemento.setLong(2, complemento.id());
+                        stmtVendaComplemento.setInt(3, complemento.quantidade());
                         stmtVendaComplemento.executeUpdate();
                     }
-                    for (Long idCobertura : item.coberturasIds()) {//cria vendaItemCoberturas
+                    for (ItemAdicional cobertura : item.coberturas()) {//cria vendaItemCoberturas
                         stmtVendaCobertura.setLong(1, idVendaItem);
-                        stmtVendaCobertura.setLong(2, idCobertura);
+                        stmtVendaCobertura.setLong(2, cobertura.id());
+                        stmtVendaCobertura.setInt(3, cobertura.quantidade());
                         stmtVendaCobertura.executeUpdate();
                     }
 
@@ -105,6 +128,25 @@ public class VendaDAO {
             return new Venda(idVenda, dataDaTransacao, venda);
         }
 
+    public void deletar(Long vendaId) throws SQLException, IllegalArgumentException, Exception{
+        String sql = "DELETE FROM vendas WHERE id = ?";
+
+        if(buscarVendaBasePorId(vendaId) == null) {
+            throw new IllegalArgumentException();
+        }
+
+        try (Connection conexao = FabricaConexao.getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setLong(1, vendaId);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw e;
+        }
+
+    }
+
     public VendaDetalhada buscarPorIdVendaDetalhado(Long vendaId) throws Exception {
         ProdutoDAO produtoDAO = new ProdutoDAO();
         ComplementoCoberturaDAO compCobDAO = new ComplementoCoberturaDAO();
@@ -121,8 +163,8 @@ public class VendaDAO {
         // 2. Para cada item, buscar os detalhes completos
         for (VendaItem itemBase : itensBase) {
             Produto produto = produtoDAO.buscarID(itemBase.produtoId());
-            List<ComplementoCobertura> complementos = buscarAdicionaisPorItemId(itemBase.id(), "complementos");
-            List<ComplementoCobertura> coberturas = buscarAdicionaisPorItemId(itemBase.id(), "coberturas");
+            List<ItemAdicional> complementos = buscarAdicionaisPorItemId(itemBase.id(), "complementos");
+            List<ItemAdicional> coberturas = buscarAdicionaisPorItemId(itemBase.id(), "coberturas");
 
             itensDetalhados.add(new VendaItemDetalhado(
                     itemBase.id(),
@@ -144,27 +186,6 @@ public class VendaDAO {
         );
     }
 
-    public List<Venda> listarTodasAsVendasBase() throws SQLException {
-        List<Venda> vendas = new ArrayList<>();
-        String sql = "SELECT * FROM vendas ORDER BY data_venda DESC";
-
-        try (Connection conexao = FabricaConexao.getConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql);
-             ResultSet resultado = stmt.executeQuery()) {
-
-            while (resultado.next()) {
-                vendas.add(new Venda(
-                        resultado.getLong("id"),
-                        resultado.getObject("data_venda", Date.class),
-                        resultado.getBigDecimal("valor_total"),
-                        resultado.getString("forma_pagamento"),
-                        null
-                ));
-            }
-        }
-        return vendas;
-    }
-
     private Venda buscarVendaBasePorId(Long vendaId) throws SQLException, Exception {
         String sql = "SELECT * FROM vendas WHERE id = ?";
 
@@ -178,7 +199,7 @@ public class VendaDAO {
                     Long id = resultado.getLong("id");
                     return new Venda(
                             id,
-                            resultado.getDate("data_venda"),
+                            resultado.getObject("data_venda", Date.class),
                             resultado.getBigDecimal("valor_total"),
                             resultado.getString("forma_pagamento"),
                             buscarItensBasePorVendaId(id)
@@ -196,7 +217,7 @@ public class VendaDAO {
     }
 
     private List<VendaItem> buscarItensBasePorVendaId(Long vendaId) throws SQLException, Exception {
-        String sql = "SELECT * FROM venda_itens WHERE id = ?";
+        String sql = "SELECT * FROM venda_itens WHERE venda_id = ?";
         List<VendaItem> itens = new ArrayList<>();
 
         try(Connection conexao = FabricaConexao.getConexao();
@@ -208,21 +229,16 @@ public class VendaDAO {
             while (resultado.next()) {
                 Long idItem = resultado.getLong("id");
 
-                List<ComplementoCobertura> complementos = buscarAdicionaisPorItemId(idItem, "complementos");
-                List<Long> complementosIds = new ArrayList<>();
-                complementos.stream().forEach(c -> complementosIds.add(c.id()));
-
-                List<ComplementoCobertura> coberturas = buscarAdicionaisPorItemId(idItem, "complementos");
-                List<Long> coberturasIds = new ArrayList<>();
-                complementos.stream().forEach(c -> coberturasIds.add(c.id()));
+                List<ItemAdicional> complementos = buscarAdicionaisPorItemId(idItem, "complementos");
+                List<ItemAdicional> coberturas = buscarAdicionaisPorItemId(idItem, "coberturas");
 
                 itens.add(new VendaItem(
                         idItem,
                         resultado.getLong("produto_id"),
                         resultado.getInt("quantidade"),
                         resultado.getBigDecimal("preco_unitario_da_venda"),
-                        complementosIds,
-                        coberturasIds
+                        complementos,
+                        coberturas
                         )
                 );
             }
@@ -238,13 +254,13 @@ public class VendaDAO {
         return null;
     }
 
-    private List<ComplementoCobertura> buscarAdicionaisPorItemId(Long itemId, String tipo) throws SQLException, Exception {
+    private List<ItemAdicional> buscarAdicionaisPorItemId(Long itemId, String tipo) throws SQLException, Exception {
         ComplementoCoberturaDAO dao = new ComplementoCoberturaDAO();
-        List<ComplementoCobertura> lista = new ArrayList<>();
+        List<ItemAdicional> lista = new ArrayList<>();
         String tabelaLigacao = tipo.equals("complementos") ? "venda_item_complementos" : "venda_item_coberturas";
         String colunaId = tipo.equals("complementos") ? "complemento_id" : "cobertura_id";
 
-        String sql = "SELECT "+ colunaId +" FROM "+ tabelaLigacao +" WHERE venda_item_id = ?";
+        String sql = "SELECT "+ colunaId +", quantidade FROM "+ tabelaLigacao +" WHERE venda_item_id = ?";
 
         try (Connection conexao = FabricaConexao.getConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
@@ -252,7 +268,8 @@ public class VendaDAO {
             try (ResultSet resultado = stmt.executeQuery()) {
                 while (resultado.next()) {
                     Long adicionalId = resultado.getLong(colunaId);
-                    lista.add(dao.buscarID(adicionalId, tipo));
+                    ComplementoCobertura compCober= dao.buscarID(adicionalId, tipo);
+                    lista.add(new ItemAdicional(compCober.id(), compCober.nome(), compCober.preco(),  resultado.getInt("quantidade")));
                 }
 
             }catch (SQLException e) {

@@ -1,0 +1,154 @@
+/* NÍVEL 2 (PDV): ESTILOS PARA O COMPONENTE CARRINHO */
+
+.carrinho {
+  background-color: var(--fundo-elemento);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--sombra-suave);
+  overflow: hidden; /* Garante que os cantos arredondados sejam respeitados */
+  display: flex;
+  flex-direction: column;
+}
+
+.carrinho h2 {
+  padding: 1.2rem 1.5rem;
+  font-size: 1.5rem;
+  color: var(--roxo-principal);
+  border-bottom: 1px solid var(--cor-borda);
+  margin: 0;
+}
+
+/* Mensagem de carrinho vazio */
+.carrinho p {
+  padding: 2rem;
+  text-align: center;
+  color: #777;
+}
+
+/* Lista de itens no carrinho */
+.carrinhoListaItens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  /* Adiciona rolagem se a lista de itens for muito grande */
+  max-height: 50vh; 
+  overflow-y: auto;
+}
+
+.carrinhoItem {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+.carrinhoItem:last-child { border-bottom: none; }
+.carrinhoItem:hover { background-color: #f9f8ff; }
+
+/* Destaque visual para o item selecionado */
+.selecionado {
+  background-color: #f4f2ff;
+  border-left: 4px solid var(--roxo-principal);
+  padding-left: calc(1.5rem - 4px); /* Compensa a borda para manter o alinhamento */
+}
+
+.itemInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+/* Lista de complementos/coberturas */
+.listaAdicionais {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0.5rem 0 0.5rem 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.itemControles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.botaoRemover {
+  background: none;
+  border: none;
+  color: #c53030; /* Vermelho para ação de exclusão */
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+.botaoRemover:hover {
+  background-color: #fef2f2;
+  text-decoration: underline;
+}
+
+/* Seção do Total e Finalização */
+.carrinhoTotal {
+  padding: 1.5rem;
+  background-color: var(--fundo-pagina);
+  border-top: 1px solid var(--cor-borda);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.carrinhoTotal h3 {
+  font-size: 1.6rem;
+  text-align: right;
+  color: var(--roxo-principal);
+  margin: 0;
+}
+
+.formaPagamentoSeletor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.formaPagamentoSeletor label {
+  font-weight: 500;
+}
+
+.formaPagamentoSeletor select {
+  flex-grow: 1; /* Faz o select ocupar o espaço restante */
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--cor-borda);
+  font-size: 1rem;
+}
+
+.botaoFinalizar {
+  background-color: var(--amarelo-destaque);
+  color: var(--texto-principal);
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.botaoFinalizar:hover {
+  background-color: #e6c300;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+li {
+    margin-bottom: 0.5rem;
+}

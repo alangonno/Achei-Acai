@@ -110,6 +110,32 @@ public class VendasServlet extends HttpServlet {
     protected void doDelete (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        Long vendaId = extrairIdUrl(request);
+        if (vendaId == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"erro\":\"ID de venda inválido ou não fornecido na URL.\"}");
+            return;
+        }
+
+        try {
+
+            vendaDAO.deletar(vendaId);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+
+
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.getWriter().print(e.getMessage());
+
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().print(e.getMessage());
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().print(e.getMessage());
+        }
+
     }
 
     private Long extrairIdUrl(HttpServletRequest request) throws NumberFormatException {

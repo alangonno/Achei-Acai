@@ -1,0 +1,126 @@
+/* NÍVEL FINAL: ESTILOS PARA O MODAL DE DETALHES DA VENDA */
+
+/* Animações para uma entrada suave */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* O fundo escurecido que cobre a tela inteira */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 15, 25, 0.7); /* Roxo bem escuro e semi-transparente */
+  backdrop-filter: blur(4px); /* Efeito de desfoque para navegadores modernos */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  z-index: 1000; /* Garante que o modal fique acima de todo o resto */
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* O painel branco com o conteúdo */
+.modalContent {
+  background-color: var(--fundo-elemento);
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  
+  width: 90%;
+  max-width: 600px; /* Largura máxima no desktop */
+  max-height: 90vh; /* Altura máxima para não sair da tela */
+  overflow-y: auto; /* Adiciona rolagem se o conteúdo for longo */
+  
+  position: relative;
+  animation: slideUp 0.4s ease-out;
+}
+
+/* Botão de fechar 'X' no canto superior direito */
+.modalCloseButton {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+.modalCloseButton:hover {
+  color: #333;
+}
+
+/* Cabeçalho do Modal */
+.modalContent h2 {
+  padding: 1.5rem;
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--roxo-principal);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+/* Informações Resumidas da Venda */
+.vendaInfo {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+.vendaInfo p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+/* Seção de Itens Comprados */
+.modalContent h3 {
+  padding: 1rem 1.5rem 0.5rem;
+  font-size: 1.2rem;
+  color: var(--texto-principal);
+  margin: 0;
+}
+
+.listaItensDetalhe {
+  list-style: none;
+  padding: 0 1.5rem 1.5rem;
+  margin: 0;
+}
+
+.itemDetalhe {
+  padding: 1rem 0;
+  border-bottom: 1px dashed var(--cor-borda);
+}
+.itemDetalhe:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.itemProdutoInfo {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.listaAdicionaisDetalhe {
+  list-style: none;
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+.listaAdicionaisDetalhe span {
+  font-weight: 500;
+}
+.listaAdicionaisDetalhe li {
+  margin-top: 0.25rem;
+}

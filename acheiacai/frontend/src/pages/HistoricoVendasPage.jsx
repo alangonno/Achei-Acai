@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { buscarTodasVendas, deletarVendaPorId } from '../services/vendaService.js';
 import VendaDetalheModal from '../components/VendasComponents/VendaDetalheModal.jsx';
 
+import pageStyles from './HistoricoVendasPage.module.css';
+import tableStyles from '../components/ProdutosComponents/Tabela.module.css';
+
 function HistoricoVendasPage() {
     const [vendas, setVendas] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -44,38 +47,39 @@ function HistoricoVendasPage() {
     if (error) return <p>Erro: {error}</p>;
 
     return (
-        <div className="historico-vendas-pagina">
+        <div className={pageStyles.historicoVendasPagina}>
             <h1>Histórico de Vendas</h1>
-            <table className="data-table">
-                <thead>
-                    <tr>
-                        <th>ID da Venda</th>
-                        <th>Data e Hora</th>
-                        <th>Forma de Pagamento</th>
-                        <th>Valor Total (R$)</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {vendas.map(venda => (
-                        <tr key={venda.id}>
-                            <td>{venda.id}</td>
-                            <td>{new Date(venda.dataVenda).toLocaleString('pt-BR')}</td>
-                            <td>{venda.formaPagamento}</td>
-                            <td>{venda.valorTotal.toFixed(2)}</td>
-                            <td>
-                                <button className="botao-detalhes" onClick={() => setVendaSelecionadaId(venda.id)}>
-                                    Detalhes
-                                </button>
-                                <button className="delete-button" onClick={() =>
-                                handleExcluir(venda.id)}> 
-                                    Deletar 
-                                </button>
-                            </td>
+            <div className={tableStyles.tableWrapper}>
+                <table className={tableStyles.dataTable}>
+                    <thead>
+                        <tr>
+                            <th>ID da Venda</th>
+                            <th>Data e Hora</th>
+                            <th>Forma de Pagamento</th>
+                            <th>Valor Total (R$)</th>
+                            <th>Ações</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {vendas.map(venda => (
+                            <tr key={venda.id}>
+                                <td data-label="ID da Venda">{venda.id}</td>
+                                <td data-label="Data e Hora">{new Date(venda.dataVenda).toLocaleString('pt-BR')}</td>
+                                <td data-label="Forma de Pagamento">{venda.formaPagamento}</td>
+                                <td data-label="Valor Total (R$)">{venda.valorTotal.toFixed(2)}</td>
+                                <td data-label="Ações" className={tableStyles.actions}>
+                                     <button className={tableStyles.detailsButton} onClick={() => setVendaSelecionadaId(venda.id)}>
+                                        Detalhes
+                                    </button>
+                                    <button className={tableStyles.deleteButton} onClick={() => handleExcluir(venda.id)}> 
+                                        Deletar 
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             
             {vendaSelecionadaId && (

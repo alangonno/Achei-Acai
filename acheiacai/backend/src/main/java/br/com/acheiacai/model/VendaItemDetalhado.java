@@ -9,7 +9,7 @@ public record VendaItemDetalhado(
         Produto produto,
         int quantidade,
         BigDecimal precoUnitario,
-        List<ComplementoCobertura> complementos,
-        List<ComplementoCobertura> coberturas
+        List<ItemAdicional> complementos,
+        List<ItemAdicional> coberturas
 ) {
 }

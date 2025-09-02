@@ -8,7 +8,7 @@ public record VendaItem(
         Long produtoId,
         int quantidade,
         BigDecimal precoUnitario,
-        List<Long> complementosIds,
-        List<Long> coberturasIds
+        List<ItemAdicional> complementos,
+        List<ItemAdicional> coberturas
 ) {
 }

@@ -8,6 +8,8 @@ import * as produtoService from '../services/produtoService';
 import * as complementoService from '../services/complementosService';
 import * as coberturaService from '../services/coberturasService';
 
+import styles from './PontoDeVendaPage.module.css';
+
 function PontoDeVendaPage() {
   const [produtos, setProdutos] = useState([]);
   const [complementos, setComplementos] = useState([]);
@@ -45,17 +47,17 @@ function PontoDeVendaPage() {
   }
 
   return (
-    <div className="pdv-pagina">
-      <div className="pdv-coluna-cardapio">
+   <div className={styles.pdvPagina}>
+      <div className={styles.pdvColunaCardapio}>
         <h2>Cardápio</h2>
         
         <section>
           <h3>Produtos</h3>
-          <div className="lista-itens-cardapio">
+          <div className={styles.listaItensCardapio}>
             {produtos.map(p => (
               <div 
                 key={p.id} 
-                className="item-cardapio"
+                className={styles.itemCardapio}
                 onClick={() => dispatch({ type: Acoes.ADICIONAR_PRODUTO, payload: p })}
               >
                 {p.nome} - {p.variacao} ({p.tamanho})
@@ -66,11 +68,11 @@ function PontoDeVendaPage() {
 
         <section>
           <h3>Complementos</h3>
-          <div className="lista-itens-cardapio">
+          <div className={styles.listaItensCardapio}>
             {complementos.map(com => (
               <div 
                 key={com.id} 
-                className="item-cardapio"
+                className={styles.itemCardapio}
                 onClick={() => dispatch({ type: Acoes.ADICIONAR_COMPLEMENTO, payload: com })}
               >
                 {com.nome}
@@ -81,11 +83,11 @@ function PontoDeVendaPage() {
 
         <section>
           <h3>Coberturas</h3>
-          <div className="lista-itens-cardapio">
+          <div className={styles.listaItensCardapio}>
             {coberturas.map(cob => (
               <div 
                 key={cob.id} 
-                className="item-cardapio"
+                className={styles.itemCardapio}
                 onClick={() => dispatch({ type: Acoes.ADICIONAR_COBERTURA, payload: cob })}
               >
                 {cob.nome}
@@ -96,7 +98,7 @@ function PontoDeVendaPage() {
         
       </div>
 
-      <div className="pdv-coluna-carrinho">
+      <div className={styles.pdvColunaCarrinho}>
         <Carrinho />
       </div>
     </div>

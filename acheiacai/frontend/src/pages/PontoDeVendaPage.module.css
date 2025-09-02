@@ -1,0 +1,83 @@
+/* NÍVEL 1 (PDV): ESTILOS PARA A PÁGINA DO PONTO DE VENDA */
+
+/* --- Estilos Base (Mobile) --- */
+
+.pdvPagina {
+  display: flex;
+  flex-direction: column; /* Colunas empilhadas no mobile */
+  gap: 2rem; /* Espaço entre a coluna do cardápio e a do carrinho */
+}
+
+/* Coluna da esquerda (Cardápio) */
+.pdvColunaCardapio h2,
+.pdvColunaCardapio h3 {
+  color: var(--roxo-principal);
+  margin-bottom: 1rem;
+}
+
+.pdvColunaCardapio h2 {
+  font-size: 1.8rem;
+  border-bottom: 2px solid var(--cor-borda);
+  padding-bottom: 1rem;
+}
+
+.pdvColunaCardapio h3 {
+  font-size: 1.3rem;
+  margin-top: 2rem; /* Espaço entre as seções (Produtos, Complementos...) */
+}
+
+/* Grade de itens do cardápio */
+.listaItensCardapio {
+  display: grid;
+  /* Grade responsiva: tenta encaixar itens de 140px, crescendo até ocupar o espaço */
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+/* O item clicável do cardápio */
+.itemCardapio {
+  background-color: var(--fundo-elemento);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 1.2rem 1rem;
+  
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.95rem;
+
+  cursor: pointer;
+  user-select: none; /* Impede que o texto seja selecionado ao clicar */
+  transition: all 0.2s ease-in-out;
+}
+
+.itemCardapio:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px var(--sombra-suave);
+  border-color: var(--roxo-claro);
+  color: var(--roxo-principal);
+}
+
+.itemCardapio:active {
+  transform: translateY(-1px);
+  background-color: #f4f2ff; /* Roxo bem claro para feedback de clique */
+  box-shadow: 0 2px 4px var(--sombra-suave);
+}
+
+
+/* --- Estilos para Telas Maiores (Desktop) --- */
+@media (min-width: 992px) {
+  .pdvPagina {
+    display: grid;
+    /* Coluna do cardápio ocupa 2 partes do espaço, carrinho ocupa 1 */
+    grid-template-columns: 2fr 1fr; 
+    align-items: flex-start; /* Alinha as colunas no topo */
+    gap: 2.5rem;
+  }
+
+  /* Coluna da direita (Carrinho) */
+  .pdvColunaCarrinho {
+    /* Efeito "sticky" para o carrinho acompanhar a rolagem */
+    position: sticky;
+    top: 2rem; /* Distância do topo da tela */
+  }
+}

@@ -72,9 +72,17 @@
   color: var(--texto-claro);
   transition: opacity 0.2s ease;
 }
-.actions button:hover { opacity: 0.85; }
-.actions .editButton { background-color: var(--roxo-claro); }
-.actions .deleteButton { background-color: #e53e3e; }
+.actions .editButton {
+  background-color: var(--roxo-claro);
+}
+
+.actions .detailsButton {
+  background-color: var(--roxo-claro);
+}
+
+.actions .deleteButton {
+  background-color: #e53e3e; 
+}
 
 
 /* --- Estilos para Telas Maiores (Tablet e Desktop) --- */
