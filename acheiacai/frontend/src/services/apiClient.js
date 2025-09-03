@@ -11,9 +11,27 @@ const handleResponse = async (response) => {
     return response.status === 204 ? null : response.json();
 };
 
-const request = async (endpoint, options) => {
+const request = async (endpoint, options = {}) => {
+    
+    const token = localStorage.getItem('authToken');
+
+    // 2. Define os cabeçalhos padrão
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers, // Permite que outros cabeçalhos sejam passados, se necessário
+    };
+
+    // 3. Se um token existir, adiciona-o ao cabeçalho de Authorization
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers,
+        });
         return handleResponse(response);
     } catch (error) {
         console.error(`Falha na requisição para ${endpoint}:`, error);
