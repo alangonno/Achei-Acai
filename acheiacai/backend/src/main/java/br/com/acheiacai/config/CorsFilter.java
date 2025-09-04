@@ -13,16 +13,12 @@ public class CorsFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        System.out.println(">>> CORS Filter: Interceptando uma requisição...");
+        HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
-        HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-        HttpServletResponse httpResponse = getHttpServletResponse((HttpServletResponse) servletResponse);
+        httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+        httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-        // O navegador envia uma requisição "OPTIONS" antes de um PUT ou DELETE para verificar as permissões.
-        // Se for um OPTIONS, nós apenas retornamos a resposta com os cabeçalhos acima e status OK.
-        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-        }
 
         // Passa a requisição e a resposta para o próximo filtro na cadeia (ou para o Servlet, se não houver mais filtros)
         filterChain.doFilter(servletRequest, servletResponse);
@@ -46,9 +42,6 @@ public class CorsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        System.out.println("****************************************");
-        System.out.println("********** CORS FILTER INICIADO **********");
-        System.out.println("****************************************");
     }
 
     @Override

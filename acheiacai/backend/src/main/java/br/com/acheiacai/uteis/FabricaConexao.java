@@ -1,6 +1,7 @@
 package br.com.acheiacai.uteis;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,37 +10,51 @@ import java.util.Properties;
 
 public class FabricaConexao {
 
-    public static Connection getConexao() {
+    private static final Properties prop = new Properties();
 
-        try {
-        Properties prop = getProperties();
-        final String url = prop.getProperty("banco.url");
-        final String usuario = prop.getProperty("banco.usuario");
-        final String senha = prop.getProperty("banco.senha");
+    static {
 
-        Class.forName("com.mysql.cj.jdbc.Driver"); //RESOLVEU NOSSOS PROBLEMAS NAO DAVA TEMPO DO DRIVE CARREGAR
-        Connection conexao = DriverManager.getConnection(url, usuario, senha);
-
-        return conexao;
-
-        } catch (SQLException | ClassNotFoundException e) {
-            System.err.println("!!! FALHA AO CONECTAR AO BANCO DE DADOS !!!");
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } catch(IOException e) {
-            System.err.println("!!! Falha ao acessar properties");
-            e.printStackTrace();
-            throw new RuntimeException(e);
+        try (InputStream input = FabricaConexao.class.getClassLoader().getResourceAsStream("database.properties")) {
+            if (input == null) {
+                System.err.println("Aviso: 'database.properties' não encontrado. A aplicação dependerá das variáveis de ambiente.");
+            } else {
+                prop.load(input);
+            }
+        } catch (IOException ex) {
+            System.err.println("Erro ao carregar o ficheiro de propriedades. Continuando com variáveis de ambiente.");
+            ex.printStackTrace();
         }
+    }
 
+    public static Connection getConexao() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            String url = getDbUrl();
+            if (url == null || url.isBlank()) {
+                throw new SQLException("URL do banco de dados não configurada.");
+            }
+
+            return DriverManager.getConnection(url, getDbUser(), getDbPassword());
+
+        } catch (ClassNotFoundException | SQLException e) {
+            System.err.println("!!! FALHA CRÍTICA AO OBTER CONEXÃO COM O BANCO DE DADOS !!!");
+            e.printStackTrace();
+            throw new RuntimeException("Não foi possível conectar ao banco de dados.", e);
+        }
 
     }
 
-    public static Properties getProperties() throws IOException {
-        Properties prop = new Properties();
-        prop.load(FabricaConexao.class.getClassLoader().getResourceAsStream("database.properties"));
-        return prop;
+    public static String getDbUrl() {
+        return System.getenv("DB_URL") != null ? System.getenv("DB_URL") : prop.getProperty("banco.url");
+    }
 
+    public static String getDbUser() {
+        return System.getenv("DB_USER") != null ? System.getenv("DB_USER") : prop.getProperty("banco.usuario");
+    }
+
+    public static String getDbPassword() {
+        return System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : prop.getProperty("banco.senha");
     }
 
 

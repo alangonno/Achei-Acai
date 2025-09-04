@@ -26,6 +26,10 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+
         String jsonString = request.
                 getReader().
                 lines().
@@ -54,7 +58,7 @@ public class LoginServlet extends HttpServlet {
 
             if(senhaCorreta) {
 
-                String token = JwtUtil.gerarToken(usuarioDB.nomeUsuario());
+                String token = JwtUtil.gerarToken(usuarioDB.nomeUsuario(), usuarioDB.funcao());
 
                 response.setStatus(HttpServletResponse.SC_OK);
 

@@ -2,6 +2,7 @@ package com.acheiacai.db;
 
 import br.com.acheiacai.dao.ProdutoDAO;
 import br.com.acheiacai.model.Produto;
+import br.com.acheiacai.uteis.PasswordUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -11,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import static br.com.acheiacai.uteis.FabricaConexao.getConexao;
-import static br.com.acheiacai.uteis.FabricaConexao.getProperties;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConexaoDB {
@@ -26,6 +25,8 @@ public class ConexaoDB {
         boolean sucesso = !(conexao == null || conexao.isClosed());
         assertTrue(sucesso);
     }
+}
+
 
 //    @Test
 //    void lerProdutos() {
@@ -35,8 +36,4 @@ public class ConexaoDB {
 //        assertFalse(listavazia);
 //    }
 
-    @Test
-    void lerProperties () throws IOException {
-        Properties prop = getProperties();
-    }
-}
+

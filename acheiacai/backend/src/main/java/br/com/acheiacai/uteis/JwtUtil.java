@@ -12,14 +12,22 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 
 public class JwtUtil {
 
-    private static final String CHAVE_SECRETA ="lUsOBsE+YfHxS15VTRXp09UENL9QRqqGZGETKncZZu+u9OwCa+KHUd3M0A/1w967";
+    private static final String CHAVE_SECRETA = System.getenv("JWT_KEY");
 
     private static final long TEMPO_DE_EXPIRACAO_EM_HORAS = 8;
 
-    public static String gerarToken(String nomeUsuario) {
+    static {
+        if (CHAVE_SECRETA == null || CHAVE_SECRETA.isBlank()) {
+            System.err.println("!!! ERRO CRÍTICO: A variável de ambiente JWT_SECRET_KEY não está definida! !!!");
+            throw new RuntimeException("A variável de ambiente JWT_SECRET_KEY não está definida!");
+        }
+    }
+
+    public static String gerarToken(String nomeUsuario, String funcao) {
         // Converte a nossa string de chave secreta num objeto SecretKey, que é o que a biblioteca usa
         SecretKey chave = Keys.hmacShaKeyFor(CHAVE_SECRETA.getBytes(StandardCharsets.UTF_8));
 
@@ -27,6 +35,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(nomeUsuario) // "subject": a quem o token pertence
+                .addClaims(Map.of("funcao", funcao))
                 .setIssuer("AcheiAcaiAPI") // "issuer": quem emitiu o token
                 .setIssuedAt(Date.from(agora)) // "issued at": quando foi emitido
                 .setExpiration(Date.from(agora.plus(TEMPO_DE_EXPIRACAO_EM_HORAS, ChronoUnit.HOURS))) // "expiration": quando expira
@@ -40,21 +49,16 @@ public class JwtUtil {
      * @param token A string do token JWT recebida do cliente.
      * @return O nome do utilizador se o token for válido, ou null se for inválido/expirado.
      */
-    public static String extrairNomeUsuario(String token) {
-        // Converte a nossa chave para o mesmo formato usado na geração
+    public static Claims extrairTodasAsClaims(String token) {
+
         SecretKey chave = Keys.hmacShaKeyFor(CHAVE_SECRETA.getBytes(StandardCharsets.UTF_8));
 
         try {
-            // Tenta "parsear" o token. A biblioteca irá verificar a assinatura e a data de expiração.
-            // Se algo estiver errado, ela irá lançar uma exceção.
-            Claims claims = Jwts.parser()
+            return Jwts.parser()
                     .setSigningKey(chave)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-
-            // Se chegou até aqui, o token é válido.
-            return claims.getSubject();
 
         } catch (ExpiredJwtException e) {
             System.err.println("Token JWT expirado: " + e.getMessage());
