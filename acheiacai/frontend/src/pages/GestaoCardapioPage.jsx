@@ -57,11 +57,13 @@ function GestaoCardapioPage() {
             </div>
 
             <div className={styles.conteudoDaAba}>
-                {abaAtiva === 'produtos' && <GerenciadorDeEntidade servico={produtoService} nomeDaEntidade="produtos" colunas={colunasProdutos} aba={abaAtiva} />}
+                {abaAtiva === 'produtos' && <GerenciadorDeEntidade servico={produtoService} 
+                nomeDaEntidade="produtos" colunas={colunasProdutos} aba={abaAtiva} />}
 
                 {abaAtiva === 'complementos' && <GerenciadorDeEntidade servico={complementosService} nomeDaEntidade="complementos" colunas={colunasComplementos} aba={abaAtiva} />}
 
-                {abaAtiva === 'coberturas' && <GerenciadorDeEntidade servico={coberturasService} nomeDaEntidade="coberturas" colunas={colunasCoberturas} aba={abaAtiva} />}
+                {abaAtiva === 'coberturas' && <GerenciadorDeEntidade servico={coberturasService} 
+                nomeDaEntidade="coberturas" colunas={colunasCoberturas} aba={abaAtiva} />}
             </div>
         </div>
         

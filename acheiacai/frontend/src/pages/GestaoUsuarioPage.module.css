@@ -1,0 +1,68 @@
+/* Estilos para a página de Gestão de Utilizadores */
+
+.gestaoPagina h1 {
+  font-size: 1.8rem;
+  color: var(--roxo-principal);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+/* --- Estilos Base (Mobile) --- */
+/* No mobile, o formulário e a tabela ficam empilhados */
+.gestaoPagina {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem; /* Aumenta o espaço entre as seções */
+}
+
+/* Estilo dos painéis de formulário e tabela */
+.formContainer,
+.tableContainer {
+  background-color: var(--fundo-elemento);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--sombra-suave);
+}
+
+.formContainer h2,
+.tableContainer h2 {
+  font-size: 1.3rem;
+  color: var(--texto-principal);
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.errorMessage {
+  color: #C62828;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+
+/* --- Estilos para Telas Maiores (Desktop) --- */
+@media (min-width: 992px) {
+  /* No desktop, criamos um layout de 2 colunas */
+  .gestaoPagina {
+    display: grid;
+    /* A primeira coluna (formulário) tem largura fixa, a segunda (tabela) é flexível */
+    grid-template-columns: 400px 1fr;
+    gap: 2rem;
+    align-items: flex-start; /* Alinha os painéis no topo */
+  }
+  
+  /* Remove o cabeçalho H1 do fluxo do grid para ocupar a largura total */
+  .gestaoPagina h1 {
+    grid-column: 1 / -1; /* Ocupa todas as colunas */
+  }
+
+  .formContainer,
+  .tableContainer {
+    padding: 2rem;
+  }
+}

@@ -67,7 +67,7 @@ function FormularioGenerico({ dadosIniciais, colunas, onSave, onCancel, nomeDaEn
                             </div>
                         );
                     }
-                    // Se não for 'select', renderiza o input padrão como antes
+                    
                     return (
                         <div className={styles.formGroup} key={coluna.accessor}>
                             <label htmlFor={coluna.accessor}>{coluna.header}</label>

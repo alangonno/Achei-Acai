@@ -19,4 +19,7 @@ export const buscarTodosUsuarios = () => {
     return apiClient.get(resource);
 };
 
-// Adicione aqui funções para deletar e atualizar utilizadores no futuro
+export const deletarUsuario = (id) => {
+    return apiClient.delete(`${resource}/${id}`);
+}
+
