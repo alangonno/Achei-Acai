@@ -78,13 +78,13 @@ function GestaoUsuariosPage() {
 
     return (
         <div className={pageStyles.gestaoPagina}>
-            <h1>Gestão de Utilizadores</h1>
+            <h1>Gestão de Usuarios</h1>
 
             <div className={pageStyles.formContainer}>
-                <h2>Criar Novo Utilizador</h2>
+                <h2>Criar Novo Usuario</h2>
                 <form onSubmit={handleSubmit} className={formStyles.formEntidade}>
                     <div className={formStyles.formGroup}>
-                        <label htmlFor="nomeUsuario">Nome de Utilizador</label>
+                        <label htmlFor="nomeUsuario">Nome de Usuario</label>
                         <input
                             id="nomeUsuario"
                             type="text"
@@ -116,13 +116,13 @@ function GestaoUsuariosPage() {
                     </div>
                     {error && <p className={pageStyles.errorMessage}>{error}</p>}
                     <div className={formStyles.formActions}>
-                        <button type="submit" className={formStyles.btnSalvar}>Criar Utilizador</button>
+                        <button type="submit" className={formStyles.btnSalvar}>Criar Usuario</button>
                     </div>
                 </form>
             </div>
             
             <div className={pageStyles.tableContainer}>
-                <h2>Utilizadores Existentes</h2>
+                <h2>Usuario Existentes</h2>
                 {error && <p className={pageStyles.errorMessage}>{error}</p>}
                 
                 {loading ? (
@@ -133,7 +133,7 @@ function GestaoUsuariosPage() {
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nome de Utilizador</th>
+                                    <th>Nome de Usuario</th>
                                     <th>Função</th>
                                     <th>Ações</th>
                                 </tr>
@@ -142,7 +142,7 @@ function GestaoUsuariosPage() {
                                 {usuarios.map(usuario => (
                                     <tr key={usuario.id}>
                                         <td data-label="ID">{usuario.id}</td>
-                                        <td data-label="Nome de Utilizador">{usuario.nomeUsuario}</td>
+                                        <td data-label="Nome de Usuario">{usuario.nomeUsuario}</td>
                                         <td data-label="Função">{usuario.funcao}</td>
                                         <td data-label="Ações" className={tableStyles.actions}>
                                              <button
