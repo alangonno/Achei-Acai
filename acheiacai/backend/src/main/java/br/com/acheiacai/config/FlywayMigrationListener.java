@@ -18,12 +18,14 @@ public class FlywayMigrationListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
 
         try {
+
             String url = FabricaConexao.getDbUrl();
             String user = FabricaConexao.getDbUser();
             String password = FabricaConexao.getDbPassword();
 
             Flyway flyway = Flyway.configure()
                     .dataSource(url, user, password)
+                    .schemas("public")
                     .load();
 
             flyway.migrate();

@@ -35,7 +35,7 @@ public class VendaDAO {
     }
 
     public Venda salvar(Venda venda) throws SQLException{
-        String sqlVenda = "INSERT INTO vendas(data_venda, valor_total, forma_pagamento) values (?, ?, ?)";
+        String sqlVenda = "INSERT INTO vendas(data_venda, valor_total, forma_pagamento) values (?, ?, ?::forma_de_pagamento)";
 
         String sqlVendaItem = "INSERT INTO venda_itens(venda_id, produto_id, quantidade, preco_unitario_da_venda) " +
                 "values (?, ?, ?, ?)";
@@ -58,8 +58,9 @@ public class VendaDAO {
 
             try (PreparedStatement stmtVenda = conexao.prepareStatement(sqlVenda, Statement.RETURN_GENERATED_KEYS)) { //cria Venda
                 dataDaTransacao = new Date();
+                Timestamp timestampFromDate = new Timestamp(dataDaTransacao.getTime());
 
-                stmtVenda.setObject(1, dataDaTransacao);
+                stmtVenda.setTimestamp(1, timestampFromDate);
                 stmtVenda.setBigDecimal(2, venda.valorTotal());
                 stmtVenda.setString(3, venda.formaPagamento());
                 stmtVenda.executeUpdate();

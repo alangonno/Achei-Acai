@@ -42,7 +42,7 @@ public class ProdutoDAO{
 
     public Produto criarProduto(Produto produto) throws SQLException {
 
-        String sql = "INSERT INTO produtos (nome, tipo, variacao, tamanho, preco)  VALUES(?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO produtos (nome, tipo, variacao, tamanho, preco)  VALUES(?, ?::tipo_produto, ?, ?, ?)";
 
         try (Connection conexao = getConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

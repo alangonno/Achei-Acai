@@ -36,7 +36,7 @@ public class UsuarioDAO {
 
     public Usuario criarUsuario(Usuario usuario) throws SQLException {
 
-        String sql = "INSERT INTO usuarios(nome_usuario, senha_hash, funcao) VALUES(?, ?, ?)";
+        String sql = "INSERT INTO usuarios(nome_usuario, senha_hash, funcao) VALUES(?, ?, ?::funcao_usuario)";
 
         try (Connection conexao = FabricaConexao.getConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

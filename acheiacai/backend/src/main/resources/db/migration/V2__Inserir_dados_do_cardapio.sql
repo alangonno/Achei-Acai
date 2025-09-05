@@ -1,5 +1,5 @@
 INSERT INTO usuarios (nome_usuario, senha_hash, funcao) VALUES
-("alan", "$2a$10$8F54.sfrcAi.hhq6P9yxveC6MJn/xpwnSWmq7M41DkWt.WEBnFNl2", "ADMIN");
+('alan', '$2a$10$8F54.sfrcAi.hhq6P9yxveC6MJn/xpwnSWmq7M41DkWt.WEBnFNl2', 'ADMIN');
 
 INSERT INTO produtos (nome, tipo, variacao, tamanho, preco) VALUES
 -- AÇAÍS (Sabor Natural - Preço base)

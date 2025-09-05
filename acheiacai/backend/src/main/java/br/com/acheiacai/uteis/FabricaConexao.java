@@ -28,7 +28,8 @@ public class FabricaConexao {
 
     public static Connection getConexao() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Class.forName("org.postgresql.Driver");
 
             String url = getDbUrl();
             if (url == null || url.isBlank()) {
@@ -37,7 +38,7 @@ public class FabricaConexao {
 
             return DriverManager.getConnection(url, getDbUser(), getDbPassword());
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             System.err.println("!!! FALHA CRÍTICA AO OBTER CONEXÃO COM O BANCO DE DADOS !!!");
             e.printStackTrace();
             throw new RuntimeException("Não foi possível conectar ao banco de dados.", e);
