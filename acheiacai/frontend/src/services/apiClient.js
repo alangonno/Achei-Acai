@@ -1,5 +1,5 @@
 
-const API_BASE_URL = 'http://api.acheiacai.com.br/';
+const API_BASE_URL = 'http://api.acheiacai.com.br';
 
 const handleResponse = async (response) => {
 
