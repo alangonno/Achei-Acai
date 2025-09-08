@@ -5,43 +5,49 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @WebFilter
 public class CorsFilter implements Filter {
 
+    private final Set<String> allowedOrigins = new HashSet<>();
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
+        HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
-        httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+        String requestOrigin = httpRequest.getHeader("Origin");
+
+        if (requestOrigin != null && allowedOrigins.contains(requestOrigin)) {
+            httpResponse.setHeader("Access-Control-Allow-Origin", requestOrigin);
+        }
+
         httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
 
+        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
 
-        // Passa a requisição e a resposta para o próximo filtro na cadeia (ou para o Servlet, se não houver mais filtros)
-        filterChain.doFilter(servletRequest, servletResponse);
     }
-
-    private static HttpServletResponse getHttpServletResponse(HttpServletResponse servletResponse) {
-
-        HttpServletResponse httpResponse = servletResponse;
-
-        // Adiciona o cabeçalho que diz "qualquer origem (*) pode acessar esta API"
-        httpResponse.setHeader("Access-Control-Allow-Origin", "*");
-
-        // Adiciona os cabeçalhos que dizem "quais métodos HTTP são permitidos"
-        httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-
-        // Adiciona os cabeçalhos que dizem "quais outros cabeçalhos podem ser enviados na requisição"
-        httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        return httpResponse;
-    }
-
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        String allowedOriginsEnv = System.getenv("ALLOWED_ORIGINS");
+
+        if (allowedOriginsEnv == null || allowedOriginsEnv.isBlank()) {
+            allowedOrigins.add("http://localhost:5173");
+        } else {
+            allowedOrigins.addAll(Arrays.asList(allowedOriginsEnv.split(",")));
+        }
     }
 
     @Override
