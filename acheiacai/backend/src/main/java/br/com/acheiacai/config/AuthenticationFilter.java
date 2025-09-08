@@ -23,46 +23,45 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        String requestUri = httpRequest.getRequestURI();
+
         if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
             httpResponse.setStatus(HttpServletResponse.SC_OK);
             return;
         }
 
-        String path = httpRequest.getServletPath();
-
-        // 1. Verifica se o URL está na lista de acesso público
-        if (isUrlPublica(path)) {
+        if (isUrlPublica(requestUri)) {
             chain.doFilter(request, response);
             return;
         }
 
-        // 2. Para URLs protegidos, extrai o token do cabeçalho
         String header = httpRequest.getHeader("Authorization");
 
-        // Verifica se o cabeçalho existe e está no formato "Bearer <token>"
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-
             Claims claims = JwtUtil.extrairTodasAsClaims(token);
 
             if (claims != null) {
-                // Se as claims são válidas, anexamos o nome de utilizador e a função à requisição
                 httpRequest.setAttribute("nomeUsuario", claims.getSubject());
                 httpRequest.setAttribute("funcaoUsuario", claims.get("funcao", String.class));
-
                 chain.doFilter(request, response);
                 return;
             }
         }
 
-        httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+        System.err.println("!!! Acesso negado para: " + requestUri + ". Token inválido ou em falta.");
+        httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpResponse.setContentType("application/json");
         httpResponse.setCharacterEncoding("UTF-8");
         httpResponse.getWriter().print("{\"erro\":\"Acesso não autorizado. Token inválido ou em falta.\"}");
+
     }
 
-    private boolean isUrlPublica(String path) {
-        return URLS_PUBLICAS.stream().anyMatch(path::startsWith);
+    private boolean isUrlPublica(String requestUri) {
+        if (requestUri.isEmpty()) {
+            return false;
+        }
+        return URLS_PUBLICAS.stream().anyMatch(publicPath -> requestUri.endsWith(publicPath));
     }
 
 

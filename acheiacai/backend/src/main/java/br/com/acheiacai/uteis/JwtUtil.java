@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class JwtUtil {
 
-    private static final String CHAVE_SECRETA = System.getenv("JWT_KEY");
+    private static final String CHAVE_SECRETA = System.getenv("JWT_SECRET_KEY");
 
     private static final long TEMPO_DE_EXPIRACAO_EM_HORAS = 8;
 

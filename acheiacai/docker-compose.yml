@@ -1,0 +1,43 @@
+
+version: '3.8'
+
+services:
+
+  database:
+    image: postgres:16
+    container_name: achei-acai-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: C3cbczzZ*
+      POSTGRES_DB: achei_acai_estoque_db
+    ports:
+      - "5432:5432" # Expõe a porta do PostgreSQL
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # Garante que os dados não se perdem ao reiniciar
+
+
+  backend:
+    build: ./backend # Diz ao Compose para construir a imagem usando o Dockerfile na pasta /backend
+    container_name: achei-acai-api
+    depends_on:
+      - database # Garante que o banco de dados inicie antes da API
+    ports:
+      - "8080:8080" # Expõe a porta 8080 do Tomcat
+    environment:
+      # Passamos as credenciais do banco para a nossa API como variáveis de ambiente
+      DB_URL: jdbc:postgresql://database:5432/achei_acai_estoque_db
+      DB_USER: postgres
+      DB_PASSWORD: C3cbczzZ*
+      JWT_SECRET_KEY: 1e23b6843054c570b48def3018ac54bc49f003616c86eb581d68064cb0cccc7f
+
+  frontend:
+    # Diz ao Compose para construir a imagem usando o Dockerfile na pasta /frontend
+    build: ./frontend
+    container_name: achei-acai-site
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_BASE_URL=http://backend:8080
+
+volumes:
+  postgres-data:

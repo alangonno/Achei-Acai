@@ -3,8 +3,8 @@
 *.log
 logs/
 
-/backend/src/main/resources
-
+/backend/src/main/resources/database.properties
+/docker-compose.yml
 
 #pasta build do maven
 /target/
