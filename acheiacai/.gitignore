@@ -5,6 +5,7 @@ logs/
 
 /backend/src/main/resources/database.properties
 /docker-compose.yml
+/frontend/Dockerfile
 
 #pasta build do maven
 /target/
