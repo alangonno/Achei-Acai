@@ -1,0 +1,125 @@
+/* Estilos para a página de Relatório de Vendas */
+
+.relatorioPagina h1 {
+  font-size: 1.8rem;
+  color: var(--roxo-principal);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+/* Painel de Filtros */
+.filtroContainer {
+  background-color: var(--fundo-elemento);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--sombra-suave);
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column; /* Empilhado no mobile */
+  gap: 1.5rem;
+}
+
+/* Painel de Resultados */
+.relatorioResultados {
+  display: grid;
+  grid-template-columns: 1fr; /* Uma coluna no mobile */
+  gap: 1.5rem;
+}
+
+/* Bloco/Card de Resultado */
+.resultadoBloco,
+.resumoFinanceiro {
+  background-color: var(--fundo-elemento);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--sombra-suave);
+}
+
+.resultadoBloco h2,
+.resumoFinanceiro h2 {
+  font-size: 1.3rem;
+  color: var(--roxo-principal);
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+  padding-bottom: 0.5rem;
+}
+
+.resumoFinanceiro .totalGeral {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+/* Estilo para as listas de itens */
+.resultadoBloco ul,
+.resumoFinanceiro ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.resultadoBloco li,
+.resumoFinanceiro li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed #eee;
+}
+.resultadoBloco li:last-child,
+.resumoFinanceiro li:last-child {
+  border-bottom: none;
+}
+
+/* Estilo para o valor/quantidade na direita */
+.resultadoBloco li span,
+.resumoFinanceiro li span {
+  font-weight: 600;
+  color: var(--texto-principal);
+}
+
+/* Estilo para o <details> expansível */
+.resultadoBloco details {
+  margin-top: 1rem;
+}
+
+.resultadoBloco summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--roxo-claro);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+.resultadoBloco summary:hover {
+  background-color: #f4f2ff;
+}
+.resultadoBloco details[open] summary {
+  font-weight: 600;
+}
+.resultadoBloco details ul {
+  margin-top: 1rem;
+  padding-left: 1rem;
+}
+
+
+/* --- Estilos para Telas Maiores (Desktop) --- */
+@media (min-width: 768px) {
+  .filtroContainer {
+    flex-direction: row; /* Lado a lado no desktop */
+    align-items: flex-end; /* Alinha os itens na base */
+  }
+
+  /* Faz os inputs crescerem para ocupar o espaço */
+  .filtroContainer > div {
+    flex-grow: 1;
+  }
+
+  .relatorioResultados {
+    /* Grade responsiva com no mínimo 2 colunas */
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+}

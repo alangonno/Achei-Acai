@@ -2,7 +2,6 @@
 package br.com.acheiacai.controller;
 
 import br.com.acheiacai.dao.UsuarioDAO;
-import br.com.acheiacai.model.Produto;
 import br.com.acheiacai.model.Usuario;
 import br.com.acheiacai.uteis.PasswordUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;

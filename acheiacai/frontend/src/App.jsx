@@ -12,6 +12,7 @@ import HistoricoVendasPage from './pages/HistoricoVendasPage';
 import LoginPage from './pages/LoginPage';
 
 import './App.css';
+import RelatorioPage from './pages/RelatorioPage';
 
 const AppHeader = () => {
     const { user, logout } = useAuth();
@@ -44,6 +45,7 @@ const AppHeader = () => {
                         <Link to="/pdv" onClick={handleLinkClick}>Ponto de Venda</Link>
                         <Link to="/gestao" onClick={handleLinkClick}>Gestão Cardápio</Link>
                         <Link to="/historico" onClick={handleLinkClick}>Histórico</Link>
+                        <Link to="/relatorio" onClick={handleLinkClick}>Relatorio Vendas</Link>
                         
 
                         {user.funcao === 'ADMIN' && (
@@ -78,6 +80,7 @@ function App() {
 
                                 {/* Rotas Protegidas */}
                                 <Route element={<ProtectedRoute />}>
+                                    <Route path='/relatorio' element={<RelatorioPage />}></Route>
                                     <Route path="/pdv" element={<PontoDeVendaPage />} />
                                     <Route path="/gestao" element={<GestaoCardapioPage />} />
                                     <Route path="/historico" element={<HistoricoVendasPage />} />
