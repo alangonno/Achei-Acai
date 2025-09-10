@@ -1,9 +1,10 @@
 package br.com.acheiacai.dao;
 
-import br.com.acheiacai.model.*;
+import br.com.acheiacai.model.produtos.ComplementoCobertura;
+import br.com.acheiacai.model.produtos.Produto;
+import br.com.acheiacai.model.venda.*;
 import br.com.acheiacai.uteis.FabricaConexao;
 
-import java.math.BigDecimal;
 import java.sql.*;
 
 import java.util.ArrayList;

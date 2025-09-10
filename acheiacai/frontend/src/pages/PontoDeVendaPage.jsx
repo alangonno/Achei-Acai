@@ -13,11 +13,15 @@ import styles from './PontoDeVendaPage.module.css';
 function PontoDeVendaPage() {
   const [produtos, setProdutos] = useState([]);
   const [complementos, setComplementos] = useState([]);
-    const [coberturas, setCoberturas] = useState([]);
+  const [coberturas, setCoberturas] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [filtroVariacao, setFiltroVariacao] = useState('TODAS');
+  const [variacoesDisponiveis, setVariacoesDisponiveis] = useState([]);
   
-  // Acedemos à função 'dispatch' e às 'Acoes' do nosso contexto do carrinho
   const { dispatch, Acoes } = useCart();
+
+  
 
   // Efeito para carregar todos os dados do cardápio quando a página monta
   useEffect(() => {
@@ -33,6 +37,9 @@ function PontoDeVendaPage() {
         setProdutos(dadosProdutos);
         setComplementos(dadosComplementos);
         setCoberturas(dadosCoberturas);
+
+        const todasVariacoes = [...new Set(dadosProdutos.map(p => p.variacao))];
+        setVariacoesDisponiveis(todasVariacoes);
       } catch (error) {
         console.error("Falha ao carregar o cardápio", error);
       } finally {
@@ -42,6 +49,14 @@ function PontoDeVendaPage() {
     carregarCardapio();
   }, []);
 
+    const produtosFiltrados = produtos.filter(produto => {
+        if (filtroVariacao === 'TODAS') {
+            return true;
+        }
+        return produto.variacao === filtroVariacao;
+    });
+
+
   if (loading) {
     return <p>A carregar cardápio...</p>;
   }
@@ -50,11 +65,25 @@ function PontoDeVendaPage() {
    <div className={styles.pdvPagina}>
       <div className={styles.pdvColunaCardapio}>
         <h2>Cardápio</h2>
+
+         <div className={styles.filtroCardapio}>
+              <label htmlFor="filtro-variacao">Filtrar por Variação:</label>
+              <select
+                  id="filtro-variacao"
+                  value={filtroVariacao}
+                  onChange={(e) => setFiltroVariacao(e.target.value)}
+              >
+                  <option value="TODAS">Todas as Variações</option>
+                  {variacoesDisponiveis.map(variacao => (
+                      <option key={variacao} value={variacao}>{variacao}</option>
+                  ))}
+              </select>
+          </div>
         
         <section>
           <h3>Produtos</h3>
           <div className={styles.listaItensCardapio}>
-            {produtos.map(p => (
+            {produtosFiltrados.map(p => (
               <div 
                 key={p.id} 
                 className={styles.itemCardapio}

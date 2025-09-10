@@ -86,6 +86,38 @@
   transform: translateY(-2px);
 }
 
+.btnAcao {
+  /* Herda o visual do botão de salvar */
+  background-color: var(--amarelo-destaque);
+  color: var(--texto-principal);
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* Garante que o texto não quebre */
+  
+  /* A mudança principal: largura automática */
+  width: auto;
+}
+
+.btnAcao:hover {
+  background-color: #e6c300;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Estilo para quando o botão estiver desabilitado */
+.btnAcao:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* Botão de Cancelar (Ação Secundária) */
 .btnCancelar {
   background-color: var(--fundo-elemento);
