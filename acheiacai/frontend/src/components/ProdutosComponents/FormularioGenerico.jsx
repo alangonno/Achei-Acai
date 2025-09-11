@@ -74,7 +74,7 @@ function FormularioGenerico({ dadosIniciais, colunas, onSave, onCancel, nomeDaEn
                                 type={coluna.type || 'text'}
                                 id={coluna.accessor}
                                 name={coluna.accessor}
-                                value={formData[coluna.accessor] || ''}
+                                value={formData[coluna.accessor] ?? ''}
                                 onChange={handleChange}
                                 step={coluna.type === 'number' ? '0.01' : undefined}
                             />
