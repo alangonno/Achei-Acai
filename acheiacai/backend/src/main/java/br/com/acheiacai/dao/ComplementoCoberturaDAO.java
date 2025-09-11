@@ -46,6 +46,11 @@ public class ComplementoCoberturaDAO {
         try (Connection conexao = getConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
+            if(compCober.preco() == null) compCober = new ComplementoCobertura(
+                    compCober.id(),
+                    compCober.nome(),
+                    BigDecimal.ZERO);
+
             stmt.setString(1, compCober.nome());
             stmt.setBigDecimal(2, compCober.preco());
             stmt.executeUpdate();

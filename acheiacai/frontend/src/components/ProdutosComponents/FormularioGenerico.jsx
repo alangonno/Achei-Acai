@@ -55,7 +55,6 @@ function FormularioGenerico({ dadosIniciais, colunas, onSave, onCancel, nomeDaEn
                                     name={coluna.accessor}
                                     value={formData[coluna.accessor] || ''}
                                     onChange={handleChange}
-                                    required
                                 >
                                     <option value="" disabled>Selecione uma opção</option>
                                     {coluna.options.map(option => (
@@ -77,7 +76,6 @@ function FormularioGenerico({ dadosIniciais, colunas, onSave, onCancel, nomeDaEn
                                 name={coluna.accessor}
                                 value={formData[coluna.accessor] || ''}
                                 onChange={handleChange}
-                                required
                                 step={coluna.type === 'number' ? '0.01' : undefined}
                             />
                         </div>
