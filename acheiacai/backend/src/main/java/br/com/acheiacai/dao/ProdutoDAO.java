@@ -84,7 +84,7 @@ public class ProdutoDAO{
         }
 
         if(produto.tipo() != null && !produto.tipo().isBlank()) {
-            sql.append("tipo = ?, ");
+            sql.append("tipo = ?::tipo_produto, ");
             parametros.add(produto.tipo());
         }
 
