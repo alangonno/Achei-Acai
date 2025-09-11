@@ -1,18 +1,13 @@
 import styles from './FormularioGenerico.module.css';
 import React, { useState, useEffect } from 'react';
 
-// - dadosIniciais: um objeto com os dados do item a ser editado, ou null se for para criar um novo.
-// - colunas: a configuração das colunas/campos que o formulário deve exibir.
-// - onSave: a função a ser chamada quando o utilizador clica em "Salvar".
-// - onCancel: a função a ser chamada quando o utilizador clica em "Cancelar".
-// - nomeDaEntidade: uma string como "Produto" para usar nos títulos.
 function FormularioGenerico({ dadosIniciais, colunas, onSave, onCancel, nomeDaEntidade }) {
     
     // Cria um estado inicial vazio a partir da definição das colunas
     const criarEstadoInicialVazio = () => {
         return colunas.reduce((acc, coluna) => {
             if (coluna.accessor !== 'id') {
-                acc[coluna.accessor] = '';
+                acc[coluna.accessor] = coluna.type === 'number' ? 0 : '';
             }
             return acc;
         }, {});
