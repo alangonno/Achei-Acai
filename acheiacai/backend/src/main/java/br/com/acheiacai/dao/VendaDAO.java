@@ -78,9 +78,9 @@ public class VendaDAO {
                     precoAdicionais = precoAdicionais.add(compDB.preco().multiply(new BigDecimal(comp.quantidade())));
                 }
 
-                for (ItemAdicional cob : item.complementos()) {
-                    ComplementoCobertura compDB = adicionalDAO.buscarID(cob.id(), "coberturas");
-                    precoAdicionais = precoAdicionais.add(compDB.preco().multiply(new BigDecimal(cob.quantidade())));
+                for (ItemAdicional cob : item.coberturas()) {
+                    ComplementoCobertura combDB = adicionalDAO.buscarID(cob.id(), "coberturas");
+                    precoAdicionais = precoAdicionais.add(combDB.preco().multiply(new BigDecimal(cob.quantidade())));
                 }
 
                 subtotalItens = subtotalItens.add(precoItem).add(precoAdicionais);
