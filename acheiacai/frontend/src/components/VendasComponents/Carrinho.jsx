@@ -5,9 +5,10 @@ import { useCart } from '../../contexts/CartContext';
 import { criarVenda } from '../../services/vendaService';
 
 import styles from './Carrinho.module.css';
+import formStyles from '../ProdutosComponents/FormularioGenerico.module.css'; 
 
 function Carrinho() {
-    const { itens, itemSelecionadoId, dispatch, Acoes, valorTotalCarrinho, calcularTotalItem } = useCart();
+    const { itens, itemSelecionadoId, desconto, acrescimo, dispatch, Acoes, valorTotalCarrinho, calcularTotalItem } = useCart();
     const [formaPagamento, setFormaPagamento] = useState('CREDITO');
 
     const handleFinalizarVenda = async () => {
@@ -20,6 +21,8 @@ function Carrinho() {
         const dadosParaApi = {
             formaPagamento: formaPagamento,
             valorTotal: valorTotalCarrinho,
+            desconto,
+            acrescimo,
             itens: itens.map(item => ({
                 produtoId: item.produto.id,
                 quantidade: item.quantidade,
@@ -94,6 +97,29 @@ function Carrinho() {
                     </li>
                 ))}
             </ul>
+            
+            <div className={styles.ajustesFinais}>
+                <div className={formStyles.formGroup}> {/* Reutilizando a classe! */}
+                    <label>Desconto (R$)</label>
+                    <input 
+                        type="number"
+                        placeholder="0.00"
+                        value={desconto || ''}
+                        onChange={(e) => dispatch({ type: Acoes.SET_DESCONTO, payload: parseFloat(e.target.value) || 0 })}
+                    />
+                </div>
+                <div className={formStyles.formGroup}> {/* Reutilizando a classe! */}
+                    <label>Acréscimo (R$)</label>
+                    <input 
+                        type="number"
+                        placeholder="0.00"
+                        value={acrescimo || ''}
+                        onChange={(e) => dispatch({ type: Acoes.SET_ACRESCIMO, payload: parseFloat(e.target.value) || 0 })}
+                    />
+                </div>
+            </div>
+
+
             <div className={styles.carrinhoTotal}>
                 <h3>Total: R$ {valorTotalCarrinho.toFixed(2)}</h3>
                 <div className={styles.formaPagamentoSeletor}>

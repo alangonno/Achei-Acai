@@ -5,6 +5,7 @@ import br.com.acheiacai.model.produtos.Produto;
 import br.com.acheiacai.model.venda.*;
 import br.com.acheiacai.uteis.FabricaConexao;
 
+import java.math.BigDecimal;
 import java.sql.*;
 
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class VendaDAO {
                         resultado.getObject("data_venda", Date.class),
                         resultado.getBigDecimal("valor_total"),
                         resultado.getString("forma_pagamento"),
+                        BigDecimal.ZERO,
+                        BigDecimal.ZERO,
                         null
                 ));
             }
@@ -35,8 +38,8 @@ public class VendaDAO {
         return vendas;
     }
 
-    public Venda salvar(Venda venda) throws SQLException{
-        String sqlVenda = "INSERT INTO vendas(data_venda, valor_total, forma_pagamento) values (?, ?, ?::forma_de_pagamento)";
+    public Venda salvar(Venda venda) throws SQLException, Exception{
+        String sqlVenda = "INSERT INTO vendas(data_venda, valor_total, forma_pagamento, desconto, acrescimo) values (?, ?, ?::forma_de_pagamento, ?, ?)";
 
         String sqlVendaItem = "INSERT INTO venda_itens(venda_id, produto_id, quantidade, preco_unitario_da_venda) " +
                 "values (?, ?, ?, ?)";
@@ -47,23 +50,57 @@ public class VendaDAO {
         String sqlVendaCobertura = "INSERT INTO venda_item_coberturas(venda_item_id, cobertura_id, quantidade) " +
                 "values (?, ?, ?)";
 
-        Long idVenda = null;
+        Long idVenda;
         Connection conexao = null;
-        Date dataDaTransacao = null;
+        Date dataDaTransacao;
+        BigDecimal valorTotalCalculado;
 
         try {
 
             conexao = FabricaConexao.getConexao();
             conexao.setAutoCommit(false);
 
+            BigDecimal subtotalItens = BigDecimal.ZERO;
+
+            ProdutoDAO produtoDAO = new ProdutoDAO();
+            ComplementoCoberturaDAO adicionalDAO = new ComplementoCoberturaDAO();
+
+            for (VendaItem item : venda.itens()) {
+
+                Produto produtoDB = produtoDAO.buscarID(item.produtoId());
+                if (produtoDB == null) throw new SQLException("Produto com ID " + item.produtoId() + " não encontrado.");
+
+                BigDecimal precoItem = produtoDB.preco().multiply(new BigDecimal(item.quantidade()));
+
+                BigDecimal precoAdicionais = BigDecimal.ZERO;
+                for (ItemAdicional comp : item.complementos()) {
+                    ComplementoCobertura compDB = adicionalDAO.buscarID(comp.id(), "complementos");
+                    precoAdicionais = precoAdicionais.add(compDB.preco().multiply(new BigDecimal(comp.quantidade())));
+                }
+
+                for (ItemAdicional cob : item.complementos()) {
+                    ComplementoCobertura compDB = adicionalDAO.buscarID(cob.id(), "coberturas");
+                    precoAdicionais = precoAdicionais.add(compDB.preco().multiply(new BigDecimal(cob.quantidade())));
+                }
+
+                subtotalItens = subtotalItens.add(precoItem).add(precoAdicionais);
+            }
+
+            valorTotalCalculado = subtotalItens.add(venda.acrescimo()).subtract(venda.desconto());
+
+            if (venda.valorTotal().compareTo(valorTotalCalculado) != 0) {
+                System.err.println("Aviso: O valor total enviado pelo front-end (" + venda.valorTotal() + ") é diferente do calculado no back-end (" + valorTotalCalculado + "). Usando o valor do back-end.");
+            }
 
             try (PreparedStatement stmtVenda = conexao.prepareStatement(sqlVenda, Statement.RETURN_GENERATED_KEYS)) { //cria Venda
                 dataDaTransacao = new Date();
                 Timestamp timestampFromDate = new Timestamp(dataDaTransacao.getTime());
 
                 stmtVenda.setTimestamp(1, timestampFromDate);
-                stmtVenda.setBigDecimal(2, venda.valorTotal());
+                stmtVenda.setBigDecimal(2, valorTotalCalculado);
                 stmtVenda.setString(3, venda.formaPagamento());
+                stmtVenda.setBigDecimal(5, venda.desconto());
+                stmtVenda.setBigDecimal(4, venda.acrescimo());
                 stmtVenda.executeUpdate();
 
                 try (ResultSet resultado = stmtVenda.getGeneratedKeys()) {
@@ -127,7 +164,7 @@ public class VendaDAO {
                 }
             }
 
-            return new Venda(idVenda, dataDaTransacao, venda);
+            return new Venda(idVenda, dataDaTransacao, venda, venda.desconto(), venda.acrescimo());
         }
 
     public void deletar(Long vendaId) throws SQLException, IllegalArgumentException, Exception{
@@ -204,6 +241,8 @@ public class VendaDAO {
                             resultado.getObject("data_venda", Date.class),
                             resultado.getBigDecimal("valor_total"),
                             resultado.getString("forma_pagamento"),
+                            resultado.getBigDecimal("desconto"),
+                            resultado.getBigDecimal("acrescimo"),
                             buscarItensBasePorVendaId(id)
                     );
                 }

@@ -9,6 +9,8 @@ public record Venda(
         Date dataVenda,
         BigDecimal valorTotal,
         String formaPagamento,
+        BigDecimal desconto,   // <-- NOVO
+        BigDecimal acrescimo,
         List<VendaItem> itens
 
 ) { public Venda(Long id, Date dataVenda, Venda venda) {
@@ -16,6 +18,20 @@ public record Venda(
         dataVenda,
         venda.valorTotal,
         venda.formaPagamento,
+        BigDecimal.ZERO,
+        BigDecimal.ZERO,
         venda.itens);
-}
+    }
+
+    public Venda(Long id, Date dataVenda, Venda venda, BigDecimal desconto, BigDecimal acrescimo) {
+        this(id,
+            dataVenda,
+            venda.valorTotal,
+            venda.formaPagamento,
+            desconto,
+            acrescimo,
+            venda.itens);
+    }
+
+
 }

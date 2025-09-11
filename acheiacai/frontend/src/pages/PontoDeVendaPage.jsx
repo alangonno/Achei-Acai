@@ -105,6 +105,7 @@ function PontoDeVendaPage() {
                 onClick={() => dispatch({ type: Acoes.ADICIONAR_COMPLEMENTO, payload: com })}
               >
                 {com.nome}
+                {com.preco > 0 && <span>+ R$ {com.preco.toFixed(2)}</span>}
               </div>
             ))}
           </div>
@@ -120,6 +121,7 @@ function PontoDeVendaPage() {
                 onClick={() => dispatch({ type: Acoes.ADICIONAR_COBERTURA, payload: cob })}
               >
                 {cob.nome}
+                 {cob.preco > 0 && <span>+ R$ {cob.preco.toFixed(2)}</span>}
               </div>
             ))}
           </div>
