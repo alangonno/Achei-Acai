@@ -1,4 +1,5 @@
 import React, { createContext, useReducer, useContext } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 // 1. Criar o Contexto
 const CartContext = createContext();
@@ -9,8 +10,17 @@ const Acoes = {
   REMOVER_ITEM: 'REMOVER_ITEM',
   ADICIONAR_COMPLEMENTO: 'ADICIONAR_COMPLEMENTO',
   ADICIONAR_COBERTURA: 'ADICIONAR_COBERTURA',
+  SET_DESCONTO: 'SET_DESCONTO',
+  SET_ACRESCIMO: 'SET_ACRESCIMO',
   LIMPAR_CARRINHO: 'LIMPAR_CARRINHO',
   // Adicione outras ações como ADICIONAR_COBERTURA, LIMPAR_CARRINHO, etc.
+};
+
+const estadoInicial = {
+    itens: [],
+    itemSelecionadoId: null,
+    desconto: 0,
+    acrescimo: 0,
 };
 
 // 3. A Lógica do Carrinho (Reducer)
@@ -21,7 +31,7 @@ function cartReducer(state, action) {
       const novoProduto = action.payload;
       const novoItem = {
         // Usamos um ID único para cada item no carrinho, mesmo que o produto seja o mesmo
-        cartItemId: Date.now(), 
+        cartItemId: uuidv4(), 
         produto: novoProduto,
         quantidade: 1,
         complementos: [],
@@ -88,12 +98,14 @@ function cartReducer(state, action) {
         };
     }
 
+    case Acoes.SET_DESCONTO:
+            return { ...state, desconto: action.payload };
+
+    case Acoes.SET_ACRESCIMO:
+        return { ...state, acrescimo: action.payload };
+
     case Acoes.LIMPAR_CARRINHO: {
-      return {
-        ...state,
-        itens: [],
-        itemSelecionadoId: null,
-      };
+      return estadoInicial;
     }
 
     // Lógica para calcular o total do carrinho
@@ -105,35 +117,22 @@ function cartReducer(state, action) {
 
 // 4. O Provedor do Contexto (Componente que "abraça" a aplicação)
 export function CartProvider({ children }) {
-  const [state, dispatch] = useReducer(cartReducer, {
-    itens: [],
-    itemSelecionadoId: null, // Para saber a qual item adicionar complementos/coberturas
-  });
+  const [state, dispatch] = useReducer(cartReducer, estadoInicial);
 
   // Funções de ajuda para calcular o total
   const calcularTotalItem = (item) => {
-    // --- ALTERAÇÃO APLICADA AQUI ---
-    // Garante que o preço base seja 0 se não estiver definido
     const precoBase = (item.produto.preco || 0) * item.quantidade;
-    
-    // Garante que o preço do complemento seja 0 se não estiver definido
     const precoComplementos = item.complementos.reduce((total, comp) =>  total + ((comp.preco || 0) * comp.quantidade), 0);
-    
-    // Garante que o preço da cobertura seja 0 se não estiver definido
     const precoCoberturas = item.coberturas.reduce((total, cob) => total + (cob.preco || 0), 0);
     
     return precoBase + precoComplementos + precoCoberturas;
   };
 
-  const valorTotalCarrinho = state.itens.reduce((total, item) => total + calcularTotalItem(item), 0);
+  const subtotalItens = state.itens.reduce((total, item) => total + calcularTotalItem(item), 0);
+  const valorTotalCarrinho = subtotalItens + state.acrescimo - state.desconto;
 
-  const value = {
-    ...state,
-    dispatch,
-    Acoes,
-    valorTotalCarrinho,
-    calcularTotalItem
-  };
+  const value = { ...state, dispatch, Acoes, valorTotalCarrinho, calcularTotalItem };
+
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

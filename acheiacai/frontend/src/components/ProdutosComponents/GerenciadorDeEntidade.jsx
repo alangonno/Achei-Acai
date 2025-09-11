@@ -68,7 +68,7 @@ function GerenciadorDeEntidade({ servico, nomeDaEntidade, colunas }) {
         }
     };
 
-    if (loading) return <p>A carregar {nomeDaEntidade.toLowerCase()}s...</p>;
+    if (loading) return <p>A carregar {nomeDaEntidade.toLowerCase()}...</p>;
     if (error) return <p>Ocorreu um erro: {error}</p>;
 
     return (

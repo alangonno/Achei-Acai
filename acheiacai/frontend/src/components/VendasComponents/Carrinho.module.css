@@ -152,3 +152,20 @@
 li {
     margin-bottom: 0.5rem;
 }
+
+.ajustesFinais {
+  display: grid;
+  /* Uma coluna no mobile, duas em telas maiores */
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: #f9f8ff; /* Fundo roxo bem claro para destacar a seção */
+  border-top: 1px solid var(--cor-borda);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+@media (min-width: 500px) {
+  .ajustesFinais {
+    grid-template-columns: 1fr 1fr; /* Duas colunas de tamanho igual */
+  }
+}
