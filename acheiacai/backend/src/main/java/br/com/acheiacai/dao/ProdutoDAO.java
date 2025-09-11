@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 
-import br.com.acheiacai.model.Produto;
+import br.com.acheiacai.model.produtos.Produto;
 import static br.com.acheiacai.uteis.FabricaConexao.getConexao;
 
 public class ProdutoDAO{

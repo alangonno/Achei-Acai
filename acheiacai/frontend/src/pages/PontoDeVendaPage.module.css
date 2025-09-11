@@ -63,6 +63,38 @@
   box-shadow: 0 2px 4px var(--sombra-suave);
 }
 
+.filtroCardapio {
+  display: flex;
+  flex-direction: column; /* Empilhado no mobile */
+  gap: 0.5rem;
+  background-color: #f9f8ff; /* Roxo bem claro para destacar o painel */
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid var(--cor-borda);
+}
+
+.filtroCardapio label {
+  font-weight: 500;
+  color: var(--texto-principal);
+}
+
+.filtroCardapio select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: var(--fundo-elemento);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filtroCardapio select:focus {
+  outline: none;
+  border-color: var(--roxo-claro);
+  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.2);
+}
+
 
 /* --- Estilos para Telas Maiores (Desktop) --- */
 @media (min-width: 992px) {
@@ -79,5 +111,16 @@
     /* Efeito "sticky" para o carrinho acompanhar a rolagem */
     position: sticky;
     top: 2rem; /* Distância do topo da tela */
+  }
+
+  .filtroCardapio {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .filtroCardapio select {
+    width: auto; /* A largura se ajusta ao conteúdo */
+    min-width: 250px; /* Largura mínima para não ficar muito pequeno */
   }
 }

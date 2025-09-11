@@ -1,7 +1,7 @@
 //package com.acheiacai.db;
 //
 //import br.com.acheiacai.dao.ProdutoDAO;
-//import br.com.acheiacai.model.Produto;
+//import br.com.acheiacai.model.produtos.Produto;
 //import com.fasterxml.jackson.core.JsonProcessingException;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.jupiter.api.Test;

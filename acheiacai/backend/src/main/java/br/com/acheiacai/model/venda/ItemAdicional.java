@@ -1,4 +1,4 @@
-package br.com.acheiacai.model;
+package br.com.acheiacai.model.venda;
 
 import java.math.BigDecimal;
 

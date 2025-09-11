@@ -1,7 +1,7 @@
 package br.com.acheiacai.controller;
 
 import br.com.acheiacai.dao.ProdutoDAO;
-import br.com.acheiacai.model.Produto;
+import br.com.acheiacai.model.produtos.Produto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

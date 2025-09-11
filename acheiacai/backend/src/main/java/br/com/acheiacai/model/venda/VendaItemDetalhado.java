@@ -1,11 +1,13 @@
-package br.com.acheiacai.model;
+package br.com.acheiacai.model.venda;
+
+import br.com.acheiacai.model.produtos.Produto;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public record VendaItem(
+public record VendaItemDetalhado(
         Long id,
-        Long produtoId,
+        Produto produto,
         int quantidade,
         BigDecimal precoUnitario,
         List<ItemAdicional> complementos,
