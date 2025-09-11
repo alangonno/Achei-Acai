@@ -79,10 +79,6 @@ public class ComplementosServlet extends HttpServlet{
                 erros.add("nome esta vazio");
             }
 
-            if (dadosComplemento.preco() == null || dadosComplemento.preco().compareTo(BigDecimal.ZERO) <= 0) {
-                erros.add("preço é 0 ou negativo");
-            }
-
             if (!erros.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 String jsonErros = conversor.writeValueAsString(erros);
