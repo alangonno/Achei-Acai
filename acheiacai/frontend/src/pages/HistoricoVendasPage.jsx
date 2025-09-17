@@ -8,6 +8,7 @@ import pageStyles from './HistoricoVendasPage.module.css';
 import tableStyles from '../components/ProdutosComponents/Tabela.module.css';
 
 function HistoricoVendasPage() {
+    const [paginaAtual, setPaginaAtual] = useState(0);
     const [vendas, setVendas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

@@ -1,5 +1,6 @@
 package br.com.acheiacai.dao;
 
+import br.com.acheiacai.model.Pagina;
 import br.com.acheiacai.model.produtos.ComplementoCobertura;
 import br.com.acheiacai.model.produtos.Produto;
 import br.com.acheiacai.model.venda.*;
@@ -14,6 +15,55 @@ import java.util.List;
 
 
 public class VendaDAO {
+
+    public Pagina<Venda> listarTodosPaginado(int page, int size)  throws SQLException {
+
+        String sqlContador = "SELECT COUNT(*) FROM vendas";
+        String sqlListar = "SELECT * FROM vendas ORDER BY data_venda DESC LIMIT ? OFFSET ?";
+
+        List<Venda> vendas = new ArrayList<>();
+        long totalVendas = 0;
+
+        try (Connection conexao = FabricaConexao.getConexao()) {
+
+            try (PreparedStatement stmtContador = conexao.prepareStatement(sqlContador)) {
+                try (ResultSet resultadoCont = stmtContador.executeQuery()) {
+                    if (resultadoCont.next()) {
+                        totalVendas = resultadoCont.getLong(1);
+                    }
+                }
+            }
+
+            try(PreparedStatement stmtListar = conexao.prepareStatement(sqlListar)) {
+
+                int offset = page * size;
+                stmtListar.setInt(1, size);
+                stmtListar.setInt(2, offset);
+
+                ResultSet resultadoVendas = stmtListar.executeQuery();
+                while (resultadoVendas.next()) {
+
+                    vendas.add(new Venda(
+                            resultadoVendas.getLong("id"),
+                            resultadoVendas.getObject("data_venda", Date.class),
+                            resultadoVendas.getBigDecimal("valor_total"),
+                            resultadoVendas.getString("forma_pagamento"),
+                            BigDecimal.ZERO,
+                            BigDecimal.ZERO,
+                            null
+                    ));
+                }
+
+                long totalPaginas = (long) Math.ceil(((double) totalVendas / (double) size)); //arredondando para cima as paginas
+
+                return new Pagina<Venda>(vendas,
+                        page,
+                        totalPaginas,
+                        totalVendas
+                );
+            }
+        }
+    }
 
     public List<Venda> listarTodasAsVendasBase() throws SQLException {
         List<Venda> vendas = new ArrayList<>();
@@ -322,5 +372,25 @@ public class VendaDAO {
             }
         }
         return lista;
+    }
+
+    public int ultimaPagina(int tamanho) throws SQLException{
+        String sql = "SELECT COUNT(*) FROM vendas";
+
+        long totalVenda = 0;
+
+        try (Connection conexao = FabricaConexao.getConexao()) {
+            try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+                try(ResultSet resultado = stmt.executeQuery()) {
+                    if(resultado.next()) {
+                        totalVenda = resultado.getLong(1);
+                    }
+                }
+            }
+        }
+
+        int totalPaginas = (int) Math.ceil(((double) totalVenda / tamanho ));
+
+        return totalPaginas;
     }
 }

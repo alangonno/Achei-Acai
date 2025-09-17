@@ -1,6 +1,7 @@
 package br.com.acheiacai.controller;
 
 import br.com.acheiacai.dao.VendaDAO;
+import br.com.acheiacai.model.Pagina;
 import br.com.acheiacai.model.venda.Venda;
 import br.com.acheiacai.model.venda.VendaDetalhada;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,16 +32,34 @@ public class VendasServlet extends HttpServlet {
             Long id = extrairIdUrl(request);
 
             if (id == null) {
-                List<Venda> vendas = vendaDAO.listarTodasAsVendasBase();
-                String jsonVendas = conversor.writeValueAsString(vendas);
+
+                int tamanhoPagina = 10;
+                int pagina = 0;
+
+                String pageParam = request.getParameter("page");
+                if (pageParam != null && !pageParam.isBlank()) {
+                    pagina = Integer.parseInt(pageParam);
+                }
+
+                String sizeParam = request.getParameter("size");
+                if (sizeParam != null && !sizeParam.isBlank()) {
+                    tamanhoPagina = Integer.parseInt(sizeParam);
+                }
+
+                if(pagina == 0){
+                    pagina = vendaDAO.ultimaPagina(tamanhoPagina);
+                }
+
+                Pagina<Venda> vendasPaginado = vendaDAO.listarTodosPaginado(pagina, tamanhoPagina);
+                String jsonPaginaVenda = conversor.writeValueAsString(vendasPaginado);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
-                response.getWriter().print(jsonVendas);
-                return ;
+                response.getWriter().print(jsonPaginaVenda);
+                return;
             }
 
-            VendaDetalhada vendaDetalhada= vendaDAO.buscarPorIdVendaDetalhado(id);
-            String jsonVendaDetalhada= conversor.writeValueAsString(vendaDetalhada);
+            VendaDetalhada vendaDetalhada = vendaDAO.buscarPorIdVendaDetalhado(id);
+            String jsonVendaDetalhada = conversor.writeValueAsString(vendaDetalhada);
             response.setContentType("application/json");
 
             if (vendaDetalhada != null) {
@@ -49,15 +69,13 @@ public class VendasServlet extends HttpServlet {
                 response.getWriter().print("{\"erro\":\"Venda não encontrada.\"}");
             }
 
+        } catch(NumberFormatException e){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"erro\":\"Parâmetros de página ou tamanho inválidos.\"}");
 
-        } catch (Exception e) {
+        } catch(Exception e){
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            String erroJson = "Falha ao processar a requisição de vendas. detalhe: " + e.getMessage();
-            response.getWriter().print(erroJson);
-
+            response.getWriter().print("{\"erro\":\"Falha ao processar a requisição de vendas.\"}");
             e.printStackTrace();
         }
 
@@ -141,7 +159,7 @@ public class VendasServlet extends HttpServlet {
 
         String id_url = request.getPathInfo();
 
-        if (id_url == null || id_url.equals("/")) {
+        if (id_url == null || id_url.equals("/") ) {
             return null;
         }
 
@@ -150,6 +168,19 @@ public class VendasServlet extends HttpServlet {
             return Long.parseLong(id_url);
 
         } catch (NumberFormatException e) {
+            return null;
+        }
+
+    }
+
+    private List<Integer> extrairPaginasUrl(HttpServletRequest request) {
+        List<Integer> paginas = new ArrayList<>();
+
+        try {
+            paginas.add(Integer.valueOf(request.getParameter("page_size")));
+            paginas.add(Integer.valueOf(request.getParameter("page")));
+            return paginas;
+        } catch (Exception e) {
             return null;
         }
 
