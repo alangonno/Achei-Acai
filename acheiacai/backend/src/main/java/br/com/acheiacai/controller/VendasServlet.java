@@ -46,10 +46,6 @@ public class VendasServlet extends HttpServlet {
                     tamanhoPagina = Integer.parseInt(sizeParam);
                 }
 
-                if(pagina == 0){
-                    pagina = vendaDAO.ultimaPagina(tamanhoPagina);
-                }
-
                 Pagina<Venda> vendasPaginado = vendaDAO.listarTodosPaginado(pagina, tamanhoPagina);
                 String jsonPaginaVenda = conversor.writeValueAsString(vendasPaginado);
                 response.setContentType("application/json");
