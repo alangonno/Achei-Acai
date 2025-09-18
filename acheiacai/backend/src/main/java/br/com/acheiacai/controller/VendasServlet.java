@@ -169,17 +169,4 @@ public class VendasServlet extends HttpServlet {
 
     }
 
-    private List<Integer> extrairPaginasUrl(HttpServletRequest request) {
-        List<Integer> paginas = new ArrayList<>();
-
-        try {
-            paginas.add(Integer.valueOf(request.getParameter("page_size")));
-            paginas.add(Integer.valueOf(request.getParameter("page")));
-            return paginas;
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
-
 }
