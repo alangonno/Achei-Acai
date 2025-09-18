@@ -373,24 +373,4 @@ public class VendaDAO {
         }
         return lista;
     }
-
-    public int ultimaPagina(int tamanho) throws SQLException{
-        String sql = "SELECT COUNT(*) FROM vendas";
-
-        long totalVenda = 0;
-
-        try (Connection conexao = FabricaConexao.getConexao()) {
-            try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-                try(ResultSet resultado = stmt.executeQuery()) {
-                    if(resultado.next()) {
-                        totalVenda = resultado.getLong(1);
-                    }
-                }
-            }
-        }
-
-        int totalPaginas = (int) Math.ceil(((double) totalVenda / tamanho ));
-
-        return totalPaginas;
-    }
 }
