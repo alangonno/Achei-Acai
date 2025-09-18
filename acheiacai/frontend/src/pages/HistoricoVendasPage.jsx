@@ -1,14 +1,16 @@
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { buscarTodasVendas, deletarVendaPorId } from '../services/vendaService.js';
 import VendaDetalheModal from '../components/VendasComponents/VendaDetalheModal.jsx';
+import Paginacao from '../components/Paginacao/Paginacao.jsx'
 
 import pageStyles from './HistoricoVendasPage.module.css';
 import tableStyles from '../components/ProdutosComponents/Tabela.module.css';
 
 function HistoricoVendasPage() {
-    const [vendas, setVendas] = useState([]);
+    const [paginaAtual, setPaginaAtual] = useState(0);
+    const [dadosPaginados, setDadosPaginados] = useState({ content: [], totalPages: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [vendaSelecionadaId, setVendaSelecionadaId] = useState(null);
@@ -17,31 +19,31 @@ function HistoricoVendasPage() {
         if (window.confirm(`Tem a certeza de que deseja excluir a venda com ID ${itemId}?`)) {
             try {
                 await deletarVendaPorId(itemId);
-                carregarVendas();
+                carregarVendas(paginaAtual); 
             } catch (err) {
                 setError(`Falha ao excluir o item: ${err.message}`);
             }
         }
     };
     
-    const carregarVendas = async () => {
+    const carregarVendas = useCallback(async (page) => {
         try {
             setLoading(true);
             setError(null);
-            const dados = await buscarTodasVendas();
-            setVendas(dados);
+            const dados = await buscarTodasVendas(page, 10); // Busca 10 itens por página
+            setDadosPaginados(dados);
         } catch (err) {
             setError("Falha ao carregar o histórico de vendas.");
             console.error(err);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
 
     useEffect(() => {
-        carregarVendas();
-    }, []); 
+        carregarVendas(paginaAtual);
+    }, [paginaAtual, carregarVendas]); 
 
     if (loading) return <p>A carregar histórico...</p>;
     if (error) return <p>Erro: {error}</p>;
@@ -61,7 +63,7 @@ function HistoricoVendasPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {vendas.map(venda => (
+                        {dadosPaginados.content.map(venda => (
                             <tr key={venda.id}>
                                 <td data-label="ID da Venda">{venda.id}</td>
                                 <td data-label="Data e Hora">{new Date(venda.dataVenda).toLocaleString('pt-BR')}</td>
@@ -80,6 +82,12 @@ function HistoricoVendasPage() {
                     </tbody>
                 </table>
             </div>
+
+            <Paginacao 
+                paginaAtual={paginaAtual}
+                totalPaginas={dadosPaginados.totalPages}
+                onPageChange={setPaginaAtual}
+            />
 
             
             {vendaSelecionadaId && (

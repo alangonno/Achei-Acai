@@ -45,6 +45,7 @@ public class CorsFilter implements Filter {
 
         if (allowedOriginsEnv == null || allowedOriginsEnv.isBlank()) {
             allowedOrigins.add("http://localhost:5173");
+            allowedOrigins.add("http://localhost:8080");
         } else {
             allowedOrigins.addAll(Arrays.asList(allowedOriginsEnv.split(",")));
         }

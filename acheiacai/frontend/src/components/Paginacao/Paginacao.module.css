@@ -1,0 +1,52 @@
+/* Estilos para o componente de Paginação */
+
+.paginacaoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centraliza o componente */
+  gap: 1.5rem; /* Espaço entre os botões e o texto */
+  margin-top: 2rem; /* Espaço acima da paginação */
+  padding: 1rem;
+  background-color: #f9f8ff; /* Fundo roxo bem claro para destacar */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.botaoPaginacao {
+  background-color: var(--roxo-claro);
+  color: var(--texto-claro);
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.botaoPaginacao:hover {
+  background-color: var(--roxo-principal);
+  transform: translateY(-2px);
+}
+
+/* Estilo para quando o botão estiver desabilitado */
+.botaoPaginacao:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+}
+
+.infoPagina {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--texto-principal);
+  /* Impede que o texto mude de largura quando os números mudam */
+  font-variant-numeric: tabular-nums; 
+}
