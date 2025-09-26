@@ -8,6 +8,7 @@ public record RelatorioVendas (
         List<ItemRelatorio> totalCoberturas,
         List<VolumeProduto> litrosProduto,
         VolumeTotal volumeTotal,
+        List<ItemRelatorio> totalOutrosProdutos,
         List<TotalPorPagamento> totalPorPagamentos,
         BigDecimal totalGeralVendas
 ) {

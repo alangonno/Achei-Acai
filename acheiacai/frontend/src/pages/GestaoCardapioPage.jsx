@@ -23,6 +23,7 @@ function GestaoCardapioPage() {
             { value: 'SUCO', label: 'Suco' },
             { value: 'WHEY', label: 'Whey' },
             { value: 'BEBIDA', label: 'Bebida' },
+            { value: 'OUTRO', label: 'Outro' },
         ]
     },
     { header: 'Variação', accessor: 'variacao', type: 'text' },
