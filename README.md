@@ -96,10 +96,4 @@ Para o primeiro acesso, altere o script de migração `V2` para cria um utilizad
 
 ---
 
-## 📝 Próximos Passos (Roadmap Futuro)
-
-* [ ] Adicionar paginação ao Histórico de Vendas.
-
----
-
 Feito por Alan Gonçalves
