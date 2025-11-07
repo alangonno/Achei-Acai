@@ -6,7 +6,7 @@ logs/
 /backend/src/main/resources/database.properties
 /docker-compose.yml
 /frontend/Dockerfile
-/GEMINI.md
+
 #pasta build do maven
 /target/
 /backend/target/
