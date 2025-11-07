@@ -17,6 +17,13 @@ import java.util.Map;
 
 public class RelatorioDAO {
 
+    private java.time.ZonedDateTime getData(LocalDate data, boolean fim) {
+        if (fim) {
+            return data.plusDays(1).atStartOfDay(java.time.ZoneId.of("America/Sao_Paulo"));
+        }
+        return data.atStartOfDay(java.time.ZoneId.of("America/Sao_Paulo"));
+    }
+
     public List<ItemRelatorio> calcularTotalAdicionais(LocalDate dataInicio, LocalDate dataFim, String tipo) throws SQLException {
         List<ItemRelatorio> resultado = new ArrayList<>();
         String tabelaPrincipal = tipo;
@@ -34,8 +41,8 @@ public class RelatorioDAO {
 
         try (Connection conn = FabricaConexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, dataInicio.atStartOfDay());
-            stmt.setObject(2, dataFim.plusDays(1).atStartOfDay());
+            stmt.setObject(1, getData(dataInicio, false));
+            stmt.setObject(2, getData(dataFim, true));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     resultado.add(new ItemRelatorio(rs.getString("nome"), rs.getLong("quantidade_total")));
@@ -56,8 +63,8 @@ public class RelatorioDAO {
 
         try (Connection conn = FabricaConexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, dataInicio.atStartOfDay());
-            stmt.setObject(2, dataFim.plusDays(1).atStartOfDay());
+            stmt.setObject(1, getData(dataInicio, false));
+            stmt.setObject(2, getData(dataFim, true));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String tipo = rs.getString("tipo");
@@ -89,8 +96,8 @@ public class RelatorioDAO {
 
         try (Connection conn = FabricaConexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, dataInicio.atStartOfDay());
-            stmt.setObject(2, dataFim.plusDays(1).atStartOfDay());
+            stmt.setObject(1, getData(dataInicio, false));
+            stmt.setObject(2, getData(dataFim, true));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     resultado.add(new TotalPorPagamento(rs.getString("forma_pagamento"), rs.getBigDecimal("total_faturado")));
@@ -126,7 +133,7 @@ public class RelatorioDAO {
                 "FROM venda_itens vi\n" +
                 "JOIN produtos p ON vi.produto_id = p.id\n" +
                 "JOIN vendas v ON vi.venda_id = v.id\n" +
-                "WHERE v.data_venda BETWEEN ? AND ?\n" +
+                "WHERE v.data_venda >= ? AND v.data_venda < ?\n" +
                 "AND p.tipo IN ('WHEY', 'SANDUICHE', 'BEBIDA', 'OUTRO', 'SORVETE')\n" +
                 "GROUP BY nome_completo\n" +
                 "ORDER BY quantidade_total DESC;";
@@ -136,8 +143,8 @@ public class RelatorioDAO {
 
             List<ItemRelatorio> totaisProdutos = new ArrayList<>();
 
-            stmt.setObject(1, dataInicio.atStartOfDay());
-            stmt.setObject(2, dataFim.plusDays(1).atStartOfDay());
+            stmt.setObject(1, getData(dataInicio, false));
+            stmt.setObject(2, getData(dataFim, true));
 
             try(ResultSet resultado = stmt.executeQuery()) {
                 while (resultado.next()) {
