@@ -9,19 +9,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class RelatorioDAO {
 
-    private java.time.ZonedDateTime getData(LocalDate data, boolean fim) {
+    private static final Calendar TZ_CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("America/Sao_Paulo"));
+
+    private LocalDateTime getData(LocalDate data, boolean fim) {
         if (fim) {
-            return data.plusDays(1).atStartOfDay(java.time.ZoneId.of("America/Sao_Paulo"));
+            return data.plusDays(1).atStartOfDay();
         }
-        return data.atStartOfDay(java.time.ZoneId.of("America/Sao_Paulo"));
+        return data.atStartOfDay();
     }
 
     public List<ItemRelatorio> calcularTotalAdicionais(LocalDate dataInicio, LocalDate dataFim, String tipo) throws SQLException {
@@ -41,8 +47,8 @@ public class RelatorioDAO {
 
         try (Connection conn = FabricaConexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, getData(dataInicio, false));
-            stmt.setObject(2, getData(dataFim, true));
+            stmt.setTimestamp(1, Timestamp.valueOf(getData(dataInicio, false)), TZ_CALENDAR);
+            stmt.setTimestamp(2, Timestamp.valueOf(getData(dataFim, true)), TZ_CALENDAR);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     resultado.add(new ItemRelatorio(rs.getString("nome"), rs.getLong("quantidade_total")));
@@ -63,8 +69,8 @@ public class RelatorioDAO {
 
         try (Connection conn = FabricaConexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, getData(dataInicio, false));
-            stmt.setObject(2, getData(dataFim, true));
+            stmt.setTimestamp(1, Timestamp.valueOf(getData(dataInicio, false)), TZ_CALENDAR);
+            stmt.setTimestamp(2, Timestamp.valueOf(getData(dataFim, true)), TZ_CALENDAR);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String tipo = rs.getString("tipo");
@@ -96,8 +102,8 @@ public class RelatorioDAO {
 
         try (Connection conn = FabricaConexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, getData(dataInicio, false));
-            stmt.setObject(2, getData(dataFim, true));
+            stmt.setTimestamp(1, Timestamp.valueOf(getData(dataInicio, false)), TZ_CALENDAR);
+            stmt.setTimestamp(2, Timestamp.valueOf(getData(dataFim, true)), TZ_CALENDAR);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     resultado.add(new TotalPorPagamento(rs.getString("forma_pagamento"), rs.getBigDecimal("total_faturado")));
@@ -143,8 +149,8 @@ public class RelatorioDAO {
 
             List<ItemRelatorio> totaisProdutos = new ArrayList<>();
 
-            stmt.setObject(1, getData(dataInicio, false));
-            stmt.setObject(2, getData(dataFim, true));
+            stmt.setTimestamp(1, Timestamp.valueOf(getData(dataInicio, false)), TZ_CALENDAR);
+            stmt.setTimestamp(2, Timestamp.valueOf(getData(dataFim, true)), TZ_CALENDAR);
 
             try(ResultSet resultado = stmt.executeQuery()) {
                 while (resultado.next()) {
