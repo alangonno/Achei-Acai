@@ -67,7 +67,6 @@ function RelatorioPage() {
                         <h2>Volume Vendido (Litros)</h2>
                         <p><strong>Total Açaí:</strong> {relatorio.volumeTotal.totalLitrosAcai.toFixed(2)} L</p>
                         <p><strong>Total Sorvete:</strong> {relatorio.volumeTotal.totalLitrosSorvete.toFixed(2)} L</p>
-                        <p><strong>Total Suco:</strong> {relatorio.volumeTotal.totalLitrosSuco.toFixed(2)} L</p>
                         <details>
                             <summary>Ver Detalhes por Variação</summary>
                             <ul>
@@ -91,15 +90,6 @@ function RelatorioPage() {
                         <h2>Total de Coberturas Vendidas</h2>
                          <ul>
                             {relatorio.totalCoberturas.map(item => (
-                                <li key={item.nome}>{item.nome}: <span>{item.quantidadeTotal}</span></li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className={pageStyles.resultadoBloco}>
-                        <h2>Outros Itens Vendidos</h2>
-                         <ul>
-                            {relatorio.totalOutrosProdutos.map(item => (
                                 <li key={item.nome}>{item.nome}: <span>{item.quantidadeTotal}</span></li>
                             ))}
                         </ul>

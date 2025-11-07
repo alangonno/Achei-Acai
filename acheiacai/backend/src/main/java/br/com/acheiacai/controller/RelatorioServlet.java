@@ -34,7 +34,6 @@ public class RelatorioServlet extends HttpServlet {
             List<ItemRelatorio> totaisCoberturas = relatorioDAO.calcularTotalAdicionais(dataInicio, dataFim, "coberturas");
             List<VolumeProduto> volumesProduto = relatorioDAO.calcularVolumePorVariacao(dataInicio, dataFim);
             List<TotalPorPagamento> totaisPorPagamento = relatorioDAO.calcularTotaisPorPagamento(dataInicio, dataFim);
-            List<ItemRelatorio> totaisOutrosProdutos = relatorioDAO.calcularTotaisOutrosProdutos(dataInicio, dataFim);
 
             // Cálculos Finais no Servlet
             BigDecimal totalGeral = totaisPorPagamento.stream()
@@ -51,18 +50,12 @@ public class RelatorioServlet extends HttpServlet {
                     .mapToDouble(VolumeProduto::totalLitros)
                     .sum();
 
-            double totalSuco = volumesProduto.stream()
-                    .filter(v -> "SUCO".equals(v.tipo()))
-                    .mapToDouble(VolumeProduto::totalLitros)
-                    .sum();
-
-            VolumeTotal volumesTotais = new VolumeTotal(totalAcai, totalSorvete, totalSuco);
+            VolumeTotal volumesTotais = new VolumeTotal(totalAcai, totalSorvete);
 
             RelatorioVendas relatorio = new RelatorioVendas(totaisComplementos,
                                                             totaisCoberturas,
                                                             volumesProduto,
                                                             volumesTotais,
-                                                            totaisOutrosProdutos,
                                                             totaisPorPagamento,
                                                             totalGeral);
 

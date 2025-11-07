@@ -65,6 +65,29 @@ public class VendaDAO {
         }
     }
 
+    public List<Venda> listarTodasAsVendasBase() throws SQLException {
+        List<Venda> vendas = new ArrayList<>();
+        String sql = "SELECT * FROM vendas ORDER BY data_venda DESC";
+
+        try (Connection conexao = FabricaConexao.getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet resultado = stmt.executeQuery()) {
+
+            while (resultado.next()) {
+                vendas.add(new Venda(
+                        resultado.getLong("id"),
+                        resultado.getObject("data_venda", Date.class),
+                        resultado.getBigDecimal("valor_total"),
+                        resultado.getString("forma_pagamento"),
+                        BigDecimal.ZERO,
+                        BigDecimal.ZERO,
+                        null
+                ));
+            }
+        }
+        return vendas;
+    }
+
     public Venda salvar(Venda venda) throws SQLException, Exception{
         String sqlVenda = "INSERT INTO vendas(data_venda, valor_total, forma_pagamento, desconto, acrescimo) values (?, ?, ?::forma_de_pagamento, ?, ?)";
 
