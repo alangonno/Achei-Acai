@@ -96,22 +96,6 @@ function PontoDeVendaPage() {
         </section>
 
         <section>
-          <h3>Complementos</h3>
-          <div className={styles.listaItensCardapio}>
-            {complementos.map(com => (
-              <div 
-                key={com.id} 
-                className={styles.itemCardapio}
-                onClick={() => dispatch({ type: Acoes.ADICIONAR_COMPLEMENTO, payload: com })}
-              >
-                {com.nome}
-                {com.preco > 0 && <span>+ R$ {com.preco.toFixed(2)}</span>}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section>
           <h3>Coberturas</h3>
           <div className={styles.listaItensCardapio}>
             {coberturas.map(cob => (
@@ -122,6 +106,22 @@ function PontoDeVendaPage() {
               >
                 {cob.nome}
                  {cob.preco > 0 && <span>+ R$ {cob.preco.toFixed(2)}</span>}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h3>Complementos</h3>
+          <div className={styles.listaItensCardapio}>
+            {complementos.map(com => (
+              <div 
+                key={com.id} 
+                className={styles.itemCardapio}
+                onClick={() => dispatch({ type: Acoes.ADICIONAR_COMPLEMENTO, payload: com })}
+              >
+                {com.nome}
+                {com.preco > 0 && <span>+ R$ {com.preco.toFixed(2)}</span>}
               </div>
             ))}
           </div>
