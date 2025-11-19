@@ -1,0 +1,1 @@
+ALTER TYPE tipo_produto ADD VALUE 'MOUSSE' AFTER 'SUCO';

@@ -64,7 +64,7 @@ public class RelatorioDAO {
                 "FROM venda_itens vi " +
                 "JOIN produtos p ON vi.produto_id = p.id " +
                 "JOIN vendas v ON vi.venda_id = v.id " +
-                "WHERE v.data_venda >= ? AND v.data_venda < ? AND (p.tipo = 'ACAI' OR p.tipo = 'SORVETE' OR p.tipo = 'SUCO') " +
+                "WHERE v.data_venda >= ? AND v.data_venda < ? AND (p.tipo = 'ACAI' OR p.tipo = 'SORVETE' OR p.tipo = 'SUCO' OR p.tipo = 'MOUSSE') " +
                 "GROUP BY p.tipo, p.variacao, p.tamanho";
 
         try (Connection conn = FabricaConexao.getConexao();

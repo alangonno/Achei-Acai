@@ -68,6 +68,7 @@ function RelatorioPage() {
                         <p><strong>Total Açaí:</strong> {relatorio.volumeTotal.totalLitrosAcai.toFixed(2)} L</p>
                         <p><strong>Total Sorvete:</strong> {relatorio.volumeTotal.totalLitrosSorvete.toFixed(2)} L</p>
                         <p><strong>Total Suco:</strong> {relatorio.volumeTotal.totalLitrosSuco.toFixed(2)} L</p>
+                        <p><strong>Total Suco:</strong> {relatorio.volumeTotal.totalLitrosMousse.toFixed(2)} L</p>
                         <details>
                             <summary>Ver Detalhes por Variação</summary>
                             <ul>
