@@ -56,7 +56,12 @@ public class RelatorioServlet extends HttpServlet {
                     .mapToDouble(VolumeProduto::totalLitros)
                     .sum();
 
-            VolumeTotal volumesTotais = new VolumeTotal(totalAcai, totalSorvete, totalSuco);
+            double totalMousse = volumesProduto.stream()
+                    .filter(v -> "MOUSSE".equals(v.tipo()))
+                    .mapToDouble(VolumeProduto::totalLitros)
+                    .sum();
+
+            VolumeTotal volumesTotais = new VolumeTotal(totalAcai, totalSorvete, totalSuco, totalMousse);
 
             RelatorioVendas relatorio = new RelatorioVendas(totaisComplementos,
                                                             totaisCoberturas,

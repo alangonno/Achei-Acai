@@ -21,6 +21,7 @@ function GestaoCardapioPage() {
             { value: 'SORVETE', label: 'Sorvete' },
             { value: 'SANDUICHE', label: 'Sanduíche' },
             { value: 'SUCO', label: 'Suco' },
+            { value: 'MOUSSE', label: 'Mousse' },
             { value: 'WHEY', label: 'Whey' },
             { value: 'BEBIDA', label: 'Bebida' },
             { value: 'OUTRO', label: 'Outro' },
