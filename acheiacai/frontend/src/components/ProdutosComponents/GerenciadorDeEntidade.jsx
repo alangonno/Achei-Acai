@@ -103,6 +103,7 @@ function GerenciadorDeEntidade({ servico, nomeDaEntidade, colunas }) {
                     data={items} 
                     onAlterar={handleAlterar}
                     onExcluir={handleExcluir}
+                    nomeDaEntidade={nomeDaEntidade}
                 />
             )}
         </div>
