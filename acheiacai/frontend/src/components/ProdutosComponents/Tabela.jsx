@@ -1,6 +1,25 @@
+import React, { useState, useEffect, useMemo } from 'react';
 import styles from './Tabela.module.css';
 
-function Tabela({ columns, data, onAlterar, onExcluir }) {
+function Tabela({ columns, data, onAlterar, onExcluir, nomeDaEntidade }) {
+  const [filtroVariacao, setFiltroVariacao] = useState('TODAS');
+
+  // useMemo para calcular variações apenas quando `data` muda
+  const variacoesDisponiveis = useMemo(() => {
+    if (nomeDaEntidade !== 'produtos' || !data) {
+      return [];
+    }
+    return [...new Set(data.map(p => p.variacao))];
+  }, [data, nomeDaEntidade]);
+
+  // useMemo para filtrar os dados
+  const dadosFiltrados = useMemo(() => {
+    if (nomeDaEntidade !== 'produtos' || filtroVariacao === 'TODAS') {
+      return data;
+    }
+    return data.filter(item => item.variacao === filtroVariacao);
+  }, [data, filtroVariacao, nomeDaEntidade]);
+
 
   // Se não houver dados
   if (!data || data.length === 0) {
@@ -9,6 +28,23 @@ function Tabela({ columns, data, onAlterar, onExcluir }) {
 
   return (
     <div className={styles.tableWrapper}>
+
+      {nomeDaEntidade === 'produtos' && (
+        <div className={styles.filtroContainer}>
+          <label htmlFor="filtro-variacao">Filtrar por Variação:</label>
+          <select
+            id="filtro-variacao"
+            value={filtroVariacao}
+            onChange={(e) => setFiltroVariacao(e.target.value)}
+          >
+            <option value="TODAS">Todas as Variações</option>
+            {variacoesDisponiveis.map(variacao => (
+              <option key={variacao} value={variacao}>{variacao}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <table className={styles.dataTable}>
         <thead>
           <tr>
@@ -20,7 +56,7 @@ function Tabela({ columns, data, onAlterar, onExcluir }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((row) => (
+          {dadosFiltrados.map((row) => (
             <tr key={row.id}>
               {columns.map((column) => (
                 <td key={column.accessor} data-label={column.header}>

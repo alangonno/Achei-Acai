@@ -3,9 +3,74 @@
 /* --- Estilos Base (Mobile) --- */
 
 .tableWrapper {
-  /* O wrapper não precisa mais da rolagem */
-  width: 100%;
+    width: 100%;
+    overflow-x: auto; /* Permite rolagem horizontal em telas pequenas */
+    margin-top: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+/* --- ESTILOS DE FILTRO ADICIONADOS AQUI --- */
+.filtroContainer {
+  display: flex;
+  flex-direction: column; /* Empilhado no mobile */
+  gap: 0.5rem;
+  background-color: #f9f8ff; /* Roxo bem claro para destacar o painel */
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem; /* Adicionado para separar do conteúdo abaixo */
+  border: 1px solid var(--cor-borda);
 }
+
+.filtroContainer label {
+  font-weight: 500;
+  color: var(--texto-principal);
+}
+
+.filtroContainer select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: var(--fundo-elemento);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filtroContainer select:focus {
+  outline: none;
+  border-color: var(--roxo-claro);
+  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.2);
+}
+
+/* --- Estilos para Telas Maiores (Desktop) para o filtro --- */
+@media (min-width: 992px) {
+  .filtroContainer {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .filtroContainer select {
+    width: auto; /* A largura se ajusta ao conteúdo */
+    min-width: 250px; /* Largura mínima para não ficar muito pequeno */
+  }
+}
+/* --- FIM DOS ESTILOS DE FILTRO --- */
+
+.dataTable {
+    width: 100%;
+    border-collapse: collapse; /* Remove espaço entre as células */
+  }
+  
+  .dataTable th,
+  .dataTable td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Linha separadora para as linhas */
+  }
+
 
 .dataTable {
   width: 100%;
