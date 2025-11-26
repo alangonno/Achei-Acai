@@ -124,7 +124,7 @@ public class RelatorioDAO {
                 return Double.parseDouble(lowerTamanho.replace("l", ""));
             }
             if (lowerTamanho.equals("pote")) {
-                double tamanhoPote = 0.120;
+                double tamanhoPote = 0.125;
                 return tamanhoPote;
             }
         } catch (NumberFormatException e) {
