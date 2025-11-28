@@ -7,6 +7,8 @@ import * as usuarioService from '../services/usuarioService.js';
 import pageStyles from './GestaoCardapioPage.module.css';
 import formStyles from '../components/ProdutosComponents/FormularioGenerico.module.css';
 import tableStyles from '../components/ProdutosComponents/Tabela.module.css';
+import loadingStyles from './Loading.module.css';
+import errorStyles from './Error.module.css';
 
 
 function GestaoUsuariosPage() {
@@ -114,7 +116,7 @@ function GestaoUsuariosPage() {
                             <option value="ADMIN">Administrador</option>
                         </select>
                     </div>
-                    {error && <p className={pageStyles.errorMessage}>{error}</p>}
+                    {error && <div className={errorStyles.errorContainer}><p>{error}</p></div>}
                     <div className={formStyles.formActions}>
                         <button type="submit" className={formStyles.btnSalvar}>Criar Usuario</button>
                     </div>
@@ -123,10 +125,10 @@ function GestaoUsuariosPage() {
             
             <div className={pageStyles.tableContainer}>
                 <h2>Usuario Existentes</h2>
-                {error && <p className={pageStyles.errorMessage}>{error}</p>}
+                {error && <div className={errorStyles.errorContainer}><p>{error}</p></div>}
                 
                 {loading ? (
-                    <p>A carregar...</p>
+                    <div className={loadingStyles.loadingContainer}><p>A carregar...</p></div>
                 ) : (
                     <div className={tableStyles.tableWrapper}>
                         <table className={tableStyles.dataTable}>

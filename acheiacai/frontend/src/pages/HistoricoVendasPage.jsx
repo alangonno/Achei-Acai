@@ -7,6 +7,8 @@ import Paginacao from '../components/Paginacao/Paginacao.jsx'
 
 import pageStyles from './HistoricoVendasPage.module.css';
 import tableStyles from '../components/ProdutosComponents/Tabela.module.css';
+import loadingStyles from './Loading.module.css';
+import errorStyles from './Error.module.css';
 
 function HistoricoVendasPage() {
     const [paginaAtual, setPaginaAtual] = useState(0);
@@ -45,8 +47,8 @@ function HistoricoVendasPage() {
         carregarVendas(paginaAtual);
     }, [paginaAtual, carregarVendas]); 
 
-    if (loading) return <p>A carregar histórico...</p>;
-    if (error) return <p>Erro: {error}</p>;
+    if (loading) return <div className={loadingStyles.loadingContainer}><p>A carregar histórico...</p></div>;
+    if (error) return <div className={errorStyles.errorContainer}><p>Erro: {error}</p></div>;
 
     return (
         <div className={pageStyles.historicoVendasPagina}>

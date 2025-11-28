@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import Tabela from "./Tabela";
 import FormularioGenerico from "./FormularioGenerico"; 
 import styles from './GerenciadorDeEntidade.module.css';
+import loadingStyles from '../../pages/Loading.module.css';
+import errorStyles from '../../pages/Error.module.css';
 
 
 function GerenciadorDeEntidade({ servico, nomeDaEntidade, colunas }) {
@@ -68,8 +70,8 @@ function GerenciadorDeEntidade({ servico, nomeDaEntidade, colunas }) {
         }
     };
 
-    if (loading) return <p>A carregar {nomeDaEntidade.toLowerCase()}...</p>;
-    if (error) return <p>Ocorreu um erro: {error}</p>;
+    if (loading) return <div className={loadingStyles.loadingContainer}><p>A carregar {nomeDaEntidade.toLowerCase()}...</p></div>;
+    if (error) return <div className={errorStyles.errorContainer}><p>Ocorreu um erro: {error}</p></div>;
 
     return (
         <div className={styles.gerenciadorEntidade}>
