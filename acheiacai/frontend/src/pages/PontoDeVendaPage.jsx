@@ -9,6 +9,7 @@ import * as complementoService from '../services/complementosService';
 import * as coberturaService from '../services/coberturasService';
 
 import styles from './PontoDeVendaPage.module.css';
+import loadingStyles from './Loading.module.css';
 
 function PontoDeVendaPage() {
   const [produtos, setProdutos] = useState([]);
@@ -58,7 +59,7 @@ function PontoDeVendaPage() {
 
 
   if (loading) {
-    return <p>A carregar cardápio...</p>;
+    return <div className={loadingStyles.loadingContainer}><p>A carregar cardápio...</p></div>;
   }
 
   return (

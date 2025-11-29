@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { buscarRelatorioVendas } from '../services/relatorioService.js';
 import pageStyles from './RelatorioPage.module.css';
 import formStyles from '../components/ProdutosComponents/FormularioGenerico.module.css';
+import loadingStyles from './Loading.module.css';
+import errorStyles from './Error.module.css';
 
 function RelatorioPage() {
     const [dataInicio, setDataInicio] = useState('');
@@ -49,7 +51,9 @@ function RelatorioPage() {
                 </button>
             </div>
             
-            {error && <p className={pageStyles.errorMessage}>{error}</p>}
+            {error && <div className={errorStyles.errorContainer}><p>{error}</p></div>}
+
+            {loading && <div className={loadingStyles.loadingContainer}><p>A gerar...</p></div>}
 
             {relatorio && (
                 <div className={pageStyles.relatorioResultados}>

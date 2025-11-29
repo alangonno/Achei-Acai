@@ -14,6 +14,8 @@
   --texto-claro: #FFFFFF;     /* Branco, para usar sobre fundos escuros */
   --cor-borda: #E0E0E0;      /* Cinza claro para bordas e divisórias */
   --sombra-suave: rgba(0, 0, 0, 0.1);
+  --cor-erro: #C62828;
+  --fundo-erro: #fef2f2;
 }
 
 /* 2. Reset de CSS Básico */
