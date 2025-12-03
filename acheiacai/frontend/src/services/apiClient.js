@@ -1,7 +1,21 @@
 
+// 1. Armazenamento da função de logout no escopo do módulo
+let authLogout = () => {};
+
+// 2. Função de configuração para injeção de dependência
+export function setupApiClient(logoutHandler) {
+    if (logoutHandler) {
+        authLogout = logoutHandler;
+    }
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/achei-acai-api';
 
 const handleResponse = async (response) => {
+    if (response.status === 401) {
+        authLogout(); // Chama a função de logout injetada
+        throw new Error('Sessão expirada. Você foi desconectado.');
+    }
 
     if (!response.ok) {
         const errorData = await response.text();
@@ -15,19 +29,16 @@ const request = async (endpoint, options = {}) => {
     
     const token = localStorage.getItem('authToken');
 
-    // 2. Define os cabeçalhos padrão
     const headers = {
         'Content-Type': 'application/json',
-        ...options.headers, // Permite que outros cabeçalhos sejam passados, se necessário
+        ...options.headers,
     };
 
-    // 3. Se um token existir, adiciona-o ao cabeçalho de Authorization
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
     try {
-        
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
             headers,
@@ -35,6 +46,8 @@ const request = async (endpoint, options = {}) => {
         return handleResponse(response);
     } catch (error) {
         console.error(`Falha na requisição para ${endpoint}:`, error);
+        // Não re-chama authLogout aqui, pois o handleResponse já trata o 401
+        // Outros erros (ex: rede) não devem necessariamente deslogar.
         throw error;
     }
 };

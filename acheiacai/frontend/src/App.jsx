@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/LoginComponents/ProtectedRoute';
+import { setupApiClient } from './services/apiClient'; // Import setupApiClient
 
 import GestaoUsuariosPage from './pages/GestaoUsuariosPage';
 import GestaoCardapioPage from './pages/GestaoCardapioPage';
@@ -17,6 +18,10 @@ import RelatorioPage from './pages/RelatorioPage';
 const AppHeader = () => {
     const { user, logout } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    useEffect(() => {
+        setupApiClient(logout);
+    }, [logout]); // Dependency array includes logout to re-run if logout function changes (rare but good practice)
 
     const handleLinkClick = () => {
         setIsMenuOpen(false);
