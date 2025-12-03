@@ -1,61 +1,132 @@
 
+
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
+
 import { apiClient } from '../services/apiClient';
+
 import { jwtDecode } from 'jwt-decode';
+
+
 
 const AuthContext = createContext();
 
+
+
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(localStorage.getItem('authToken'));
-    const [user, setUser] = useState(null); 
- 
+
+    const [token, setToken] = useState(null);
+
+    const [user, setUser] = useState(null);
+
+    const [isLoading, setIsLoading] = useState(true);
+
 
 
     useEffect(() => {
-        if (token) {
+
+        const storedToken = localStorage.getItem('authToken');
+
+        if (storedToken) {
+
             try {
-                const decodedUser = jwtDecode(token);
-                setUser({
-                    nomeUsuario: decodedUser.sub, 
-                    funcao: decodedUser.funcao   // A nossa "claim" personalizada para a função
-                });
-                localStorage.setItem('authToken', token);
+
+                const decodedUser = jwtDecode(storedToken);
+
+                if (decodedUser.exp * 1000 > Date.now()) {
+
+                    setToken(storedToken);
+
+                    setUser({
+
+                        nomeUsuario: decodedUser.sub,
+
+                        funcao: decodedUser.funcao
+
+                    });
+
+                } else {
+
+                    localStorage.removeItem('authToken');
+
+                }
+
             } catch (error) {
-                // Se o token for inválido, limpa tudo
-                console.error("Token inválido:", error);
+
                 localStorage.removeItem('authToken');
-                setUser(null);
+
             }
-        } else {
-            setUser(null);
+
         }
-    }, [token]);
+
+        setIsLoading(false);
+
+    }, []);
+
+
 
     const login = async (username, password) => {
+
         try {
-            // Usa o apiClient, que NÃO envia token para o login
+
             const data = await apiClient.post('/login', { nomeUsuario: username, senha: password });
+
             
+
             if (data.token) {
-                localStorage.setItem('authToken', data.token);
+
                 setToken(data.token);
+
+                localStorage.setItem('authToken', data.token);
+
+                const decodedUser = jwtDecode(data.token);
+
+                setUser({
+
+                    nomeUsuario: decodedUser.sub, 
+
+                    funcao: decodedUser.funcao
+
+                });
+
                 return true;
+
             }
+
             return false;
+
         } catch (error) {
+
             console.error("Falha no login:", error);
+
             return false;
+
         }
+
     };
+
+
 
     const logout = () => {
+
         localStorage.removeItem('authToken');
+
         setToken(null);
+
+        setUser(null);
+
     };
 
-    const value = { token, user, isAuthenticated: !!user, login, logout };
+
+
+    const value = { token, user, isAuthenticated: !!user, isLoading, login, logout };
+
+
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+
 };
+
+
 
 export const useAuth = () => useContext(AuthContext);
