@@ -14,7 +14,7 @@ import java.util.Set;
 public class AuthenticationFilter implements Filter {
 
     // A nossa "lista de convidados": URLs que não precisam de autenticação.
-    private static final Set<String> URLS_PUBLICAS = Set.of("/login");
+    private static final Set<String> URLS_PUBLICAS = Set.of("/login", "/keep-alive");
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
